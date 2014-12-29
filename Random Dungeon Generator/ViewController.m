@@ -12,6 +12,7 @@
 @interface ViewController ()
 @property (nonatomic, strong) IBOutlet SWDungeonView *dungeonView;
 - (IBAction)resetButtonPushed:(id)sender;
+- (IBAction)testButtonPressed:(id)sender;
 @end
 
 @implementation ViewController
@@ -39,5 +40,10 @@
 
 - (IBAction)resetButtonPushed:(id)sender {
     [self reinitializeDungeon];
+}
+
+- (IBAction)testButtonPressed:(id)sender {
+    [self reinitializeDungeon];
+    [self.dungeonView setupForTests];
 }
 @end

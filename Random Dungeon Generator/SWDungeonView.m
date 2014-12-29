@@ -52,6 +52,21 @@
                 colored = YES;
             }
             
+            if ([t isRoom]) {
+                if (colored) { NSLog(@"[DV] wall is room"); [[NSColor magentaColor] setFill];}
+                else [[NSColor blueColor] setFill];
+                colored = YES;
+            }
+            if ([t isCorridor]) {
+                if (colored) { NSLog(@"[DV] corridor is room or wall"); [[NSColor magentaColor] setFill];}
+                else [[NSColor cyanColor] setFill];
+                colored = YES;
+            }
+            if ([t isCorridorJunction]) {
+                [[NSColor whiteColor] setFill];
+                colored = YES;
+            }
+            
             if (!colored) {
                 [[NSColor redColor] setFill];
             }
@@ -81,6 +96,8 @@
             [self updateTileAtRow:r column:c withTile:t redraw:reframePerTile];
         }
     }
+    
+    [self setNeedsDisplay:YES];
 }
 
 - (void)updateTileAtRow:(NSInteger)row column:(NSInteger)column withTile:(Tile *)newTile redraw:(BOOL)redraw
@@ -118,6 +135,8 @@
     }
     
     [thisRow replaceObjectAtIndex:column withObject:newTile];
+    
+    if (redraw) [self setNeedsDisplay:YES];
 }
 
 - (NSRect)rectForTileAtRow:(NSInteger)row column:(NSInteger)column
@@ -134,6 +153,7 @@
     NSInteger row = point.y / self.tileSize.height;
     NSInteger column = point.x / self.tileSize.width;
     
+    NSLog(@"click on tile at row %li column %li", row, column);
     Tile *t = self.rows[row][column];
     switch (t.tileType) {
         case SWTileTypeClosed:
@@ -146,4 +166,52 @@
     [self setNeedsDisplay:YES];
 }
 
+- (void)setupForTests
+{
+    ((Tile *)self.rows[0][0]).tileType = SWTileTypeClosed;
+    ((Tile *)self.rows[47][43]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[46][43]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[45][43]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[46][44]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[46][42]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[46][45]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[38][43]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[38][42]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[39][42]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[39][43]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[38][44]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[38][45]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[38][46]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[38][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[39][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[40][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[41][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[42][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[43][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[44][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[45][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[46][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[46][46]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[33][43]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[32][43]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[31][43]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[31][42]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[32][42]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[33][42]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[32][41]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[32][44]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[32][45]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[32][46]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[37][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[36][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[35][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[34][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[33][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[32][47]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[32][41]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[33][41]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[39][41]).tileType = SWTileTypeOpen;
+    ((Tile *)self.rows[31][43]).tileType = SWTileTypeOpen;
+    [self setNeedsDisplay:YES];
+}
 @end

@@ -14,11 +14,6 @@
     return (self.tileType == SWTileTypeOpen
             && [self numOrthogonalOfType:SWTileTypeOpen] == 1);
 }
-- (BOOL)isCorridor
-{
-    return (self.tileType == SWTileTypeOpen
-            && [self numOrthogonalOfType:SWTileTypeOpen] == 2);
-}
 - (BOOL)isUnwalled
 {
     return (self.tileType == SWTileTypeOpen
@@ -39,6 +34,66 @@
 {
     return (self.tileType == SWTileTypeClosed
             && [self numDiagonalOfType:SWTileTypeOpen] > 0);
+}
+
+- (BOOL)isCorridor
+{
+    if ([self isDeadEnd]
+        && [self numOrthogonalPassTest:^BOOL(Tile *t) {
+            return [t isRoom];
+        }] == 0) return YES;
+    return (self.tileType == SWTileTypeOpen
+            && [self numOrthogonalOfType:SWTileTypeOpen] > 1
+            && ![self isRoom]);
+}
+- (BOOL)isCorridorJunction
+{
+    return ([self numOrthogonalPassTest:^BOOL(Tile *t) {
+        return [t isCorridor];
+    }] > 2);
+}
+- (BOOL)isRoom
+{
+    return [self isRoomRecurse:YES];
+}
+- (BOOL)isRoomRecurse:(BOOL)recurse
+{
+    // obvs
+    if (self.tileType != SWTileTypeOpen) return NO;
+    
+    // check the alcoves
+    if ([self isDeadEnd]
+        && [self numOrthogonalPassTest:^BOOL(Tile *t) {
+            if (recurse) {
+                return [t isRoomRecurse:NO];
+            } else {
+                return NO;
+            }
+    }]) return YES;
+    
+    // any diagonals (i can get to) a room?
+    if (self.north && self.north.tileType == SWTileTypeOpen) {
+        if (self.east && self.east.tileType == SWTileTypeOpen
+            && self.east.north && self.east.north.tileType == SWTileTypeOpen) return YES;
+        if (self.west && self.west.tileType == SWTileTypeOpen
+            && self.west.north && self.west.north.tileType == SWTileTypeOpen) return YES;
+    }
+    if (self.south && self.south.tileType == SWTileTypeOpen) {
+        if (self.east && self.east.tileType == SWTileTypeOpen
+            && self.east.north && self.east.south.tileType == SWTileTypeOpen) return YES;
+        if (self.west && self.west.tileType == SWTileTypeOpen
+            && self.west.north && self.west.south.tileType == SWTileTypeOpen) return YES;
+    }
+    
+    
+    return NO;
+}
+- (BOOL)isDoorway
+{
+    return ([self isCorridor]
+            && [self numOrthogonalPassTest:^BOOL(Tile *t) {
+        return [t isRoom];
+    }] > 0);
 }
 
 - (NSInteger)numOrthogonalOfType:(SWTileType)type
