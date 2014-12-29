@@ -14,12 +14,24 @@
 @property (nonatomic, assign) NSInteger height;
 
 @property (nonatomic, assign) NSSize tileSize;
+
+@property (nonatomic, strong) NSClickGestureRecognizer *clickGR;
+- (void)handleClickGesture:(NSGestureRecognizer *)clickGR;
 @end
 
 #define kColorOpen
 #define kColorClosed
 
 @implementation SWDungeonView
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    if (self.clickGR == nil) {
+        self.clickGR = [[NSClickGestureRecognizer alloc] initWithTarget:self action:@selector(handleClickGesture:)];
+        [self addGestureRecognizer:self.clickGR];
+    }
+}
 
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
@@ -114,6 +126,24 @@
                       row*self.tileSize.height,
                       self.tileSize.width,
                       self.tileSize.height);
+}
+
+- (void)handleClickGesture:(NSGestureRecognizer *)clickGR
+{
+    NSPoint point = [clickGR locationInView:self];
+    NSInteger row = point.y / self.tileSize.height;
+    NSInteger column = point.x / self.tileSize.width;
+    
+    Tile *t = self.rows[row][column];
+    switch (t.tileType) {
+        case SWTileTypeClosed:
+            [t setTileType:SWTileTypeOpen];
+            break;
+        case SWTileTypeOpen:
+            [t setTileType:SWTileTypeClosed];
+            break;
+    }
+    [self setNeedsDisplay:YES];
 }
 
 @end

@@ -676,6 +676,17 @@
                                 <rect key="frame" x="0.0" y="68" width="480" height="202"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                             </customView>
+                            <button verticalHuggingPriority="750" id="eLQ-9i-4Rm">
+                                <rect key="frame" x="14" y="13" width="82" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="WKI-JG-35b">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="resetButtonPushed:" target="XfG-lQ-9wD" id="zzE-0x-SnP"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>

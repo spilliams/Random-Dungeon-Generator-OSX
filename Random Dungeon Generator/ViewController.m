@@ -11,6 +11,7 @@
 
 @interface ViewController ()
 @property (nonatomic, strong) IBOutlet SWDungeonView *dungeonView;
+- (IBAction)resetButtonPushed:(id)sender;
 @end
 
 @implementation ViewController
@@ -19,10 +20,7 @@
 {
     [super awakeFromNib];
     
-    // my current screen/storyboard allows for roughly 65 rows and 136 columns of 10x10 tiles
-    [self.dungeonView createWithDungeonTileSize:NSMakeSize(10, 10)
-                                           rows:65 columns:136
-                                 reframePerTile:NO];
+    [self reinitializeDungeon];
 }
 
 - (void)viewDidLoad {
@@ -31,4 +29,15 @@
     
 }
 
+- (void)reinitializeDungeon
+{
+    // my current screen/storyboard allows for roughly 65 rows and 136 columns of 10x10 tiles
+    [self.dungeonView createWithDungeonTileSize:NSMakeSize(10, 10)
+                                           rows:65 columns:136
+                                 reframePerTile:NO];
+}
+
+- (IBAction)resetButtonPushed:(id)sender {
+    [self reinitializeDungeon];
+}
 @end
