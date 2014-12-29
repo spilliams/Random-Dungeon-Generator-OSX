@@ -79,6 +79,10 @@
                 [[NSColor purpleColor] setFill];
                 drawHalf = YES;
             }
+            if ([t isDoorway]) {
+                [[NSColor brownColor] setFill];
+                drawHalf = YES;
+            }
             
             if (drawHalf) {
                 NSBezierPath *path = [NSBezierPath bezierPath];
