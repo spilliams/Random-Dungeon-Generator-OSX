@@ -48,9 +48,10 @@
 }
 - (BOOL)isCorridorJunction
 {
-    return ([self numOrthogonalPassTest:^BOOL(Tile *t) {
-        return [t isCorridor];
-    }] > 2);
+    return (self.tileType == SWTileTypeOpen
+            && [self numOrthogonalPassTest:^BOOL(Tile *t) {
+                return [t isCorridor];
+            }] > 2);
 }
 - (BOOL)isRoom
 {

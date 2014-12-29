@@ -62,15 +62,34 @@
                 else [[NSColor cyanColor] setFill];
                 colored = YES;
             }
-            if ([t isCorridorJunction]) {
-                [[NSColor whiteColor] setFill];
-                colored = YES;
-            }
             
             if (!colored) {
                 [[NSColor redColor] setFill];
             }
-            NSRectFill([self rectForTileAtRow:r column:c]);
+            NSRect tileRect = [self rectForTileAtRow:r column:c];
+            [NSBezierPath fillRect:tileRect];
+            
+            BOOL drawHalf = NO;
+            
+            if ([t isCorridorJunction]) {
+                [[NSColor whiteColor] setFill];
+                drawHalf = YES;
+            }
+            if ([t isDeadEnd]) {
+                [[NSColor purpleColor] setFill];
+                drawHalf = YES;
+            }
+            
+            if (drawHalf) {
+                NSBezierPath *path = [NSBezierPath bezierPath];
+                [path moveToPoint:tileRect.origin];
+                [path lineToPoint:NSMakePoint(tileRect.origin.x + tileRect.size.width,
+                                              tileRect.origin.y + tileRect.size.height)];
+                [path lineToPoint:NSMakePoint(tileRect.origin.x + tileRect.size.width,
+                                              tileRect.origin.y)];
+                [path closePath];
+                [path fill];
+            }
         }
     }
 }
@@ -92,7 +111,6 @@
         for (int c=0; c<self.width; c++) {
             Tile *t = [Tile new];
             [self.rows[r] addObject:t];
-            if (r==0 && c==0) t.tileType = SWTileTypeOpen;
             [self updateTileAtRow:r column:c withTile:t redraw:reframePerTile];
         }
     }
@@ -168,7 +186,6 @@
 
 - (void)setupForTests
 {
-    ((Tile *)self.rows[0][0]).tileType = SWTileTypeClosed;
     ((Tile *)self.rows[47][43]).tileType = SWTileTypeOpen;
     ((Tile *)self.rows[46][43]).tileType = SWTileTypeOpen;
     ((Tile *)self.rows[45][43]).tileType = SWTileTypeOpen;
