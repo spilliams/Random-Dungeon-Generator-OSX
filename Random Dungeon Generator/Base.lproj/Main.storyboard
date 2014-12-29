@@ -672,7 +672,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView id="Z7t-9w-Tgi" customClass="SWDungeonView">
+                            <customView id="Z7t-9w-Tgi" customClass="Dungeon">
                                 <rect key="frame" x="0.0" y="68" width="480" height="202"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                             </customView>
@@ -696,6 +696,28 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="testButtonPressed:" target="XfG-lQ-9wD" id="uE9-kJ-FR5"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" id="LTA-Sc-IAE">
+                                <rect key="frame" x="169" y="13" width="84" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <buttonCell key="cell" type="push" title="Rooms" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mIG-3w-B0M">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="roomsButtonPressed:" target="XfG-lQ-9wD" id="bkV-7V-P7C"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" id="SOp-aW-9al">
+                                <rect key="frame" x="253" y="13" width="74" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <buttonCell key="cell" type="push" title="Maze" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jVb-q0-yHN">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="mazeButtonPressed:" target="XfG-lQ-9wD" id="qsb-BX-JwH"/>
                                 </connections>
                             </button>
                         </subviews>

@@ -8,13 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSInteger, SWTileType) {
-    SWTileTypeClosed,
-    SWTileTypeOpen
+typedef NS_ENUM(NSInteger, TileType) {
+    TileTypeClosed,
+    TileTypeOpen
 };
 
 @interface Tile : NSObject
-@property (nonatomic, assign) SWTileType tileType;
+@property (nonatomic, assign) TileType tileType;
 
 @property (nonatomic, weak) Tile *north;
 @property (nonatomic, weak) Tile *south;
@@ -36,4 +36,6 @@ typedef NS_ENUM(NSInteger, SWTileType) {
 - (BOOL)isRoom;
 /// @return Whether this tile is a doorway of a room
 - (BOOL)isDoorway;
+
+- (BOOL)isValidForMaze;
 @end

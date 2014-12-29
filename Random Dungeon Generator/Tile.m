@@ -11,13 +11,13 @@
 @implementation Tile
 - (BOOL)isDeadEnd
 {
-    return (self.tileType == SWTileTypeOpen
-            && [self numOrthogonalOfType:SWTileTypeOpen] == 1);
+    return (self.tileType == TileTypeOpen
+            && [self numOrthogonalOfType:TileTypeOpen] == 1);
 }
 - (BOOL)isUnwalled
 {
-    return (self.tileType == SWTileTypeOpen
-            && [self numOrthogonalOfType:SWTileTypeOpen] == 4);
+    return (self.tileType == TileTypeOpen
+            && [self numOrthogonalOfType:TileTypeOpen] == 4);
 }
 
 - (BOOL)isWall
@@ -27,13 +27,13 @@
 }
 - (BOOL)isOrthogonalWall
 {
-    return (self.tileType == SWTileTypeClosed
-            && [self numOrthogonalOfType:SWTileTypeOpen] > 0);
+    return (self.tileType == TileTypeClosed
+            && [self numOrthogonalOfType:TileTypeOpen] > 0);
 }
 - (BOOL)isDiagonalWall
 {
-    return (self.tileType == SWTileTypeClosed
-            && [self numDiagonalOfType:SWTileTypeOpen] > 0);
+    return (self.tileType == TileTypeClosed
+            && [self numDiagonalOfType:TileTypeOpen] > 0);
 }
 
 - (BOOL)isCorridor
@@ -42,13 +42,13 @@
         && [self numOrthogonalPassTest:^BOOL(Tile *t) {
             return [t isRoom];
         }] == 0) return YES;
-    return (self.tileType == SWTileTypeOpen
-            && [self numOrthogonalOfType:SWTileTypeOpen] > 1
+    return (self.tileType == TileTypeOpen
+            && [self numOrthogonalOfType:TileTypeOpen] > 1
             && ![self isRoom]);
 }
 - (BOOL)isCorridorJunction
 {
-    return (self.tileType == SWTileTypeOpen
+    return (self.tileType == TileTypeOpen
             && [self numOrthogonalPassTest:^BOOL(Tile *t) {
                 return [t isCorridor];
             }] > 2);
@@ -60,7 +60,7 @@
 - (BOOL)isRoomRecurse:(BOOL)recurse
 {
     // obvs
-    if (self.tileType != SWTileTypeOpen) return NO;
+    if (self.tileType != TileTypeOpen) return NO;
     
     // check the alcoves
     if ([self isDeadEnd]
@@ -73,17 +73,17 @@
     }]) return YES;
     
     // any diagonals (i can get to) a room?
-    if (self.north && self.north.tileType == SWTileTypeOpen) {
-        if (self.east && self.east.tileType == SWTileTypeOpen
-            && self.east.north && self.east.north.tileType == SWTileTypeOpen) return YES;
-        if (self.west && self.west.tileType == SWTileTypeOpen
-            && self.west.north && self.west.north.tileType == SWTileTypeOpen) return YES;
+    if (self.north && self.north.tileType == TileTypeOpen) {
+        if (self.east && self.east.tileType == TileTypeOpen
+            && self.east.north && self.east.north.tileType == TileTypeOpen) return YES;
+        if (self.west && self.west.tileType == TileTypeOpen
+            && self.west.north && self.west.north.tileType == TileTypeOpen) return YES;
     }
-    if (self.south && self.south.tileType == SWTileTypeOpen) {
-        if (self.east && self.east.tileType == SWTileTypeOpen
-            && self.east.north && self.east.south.tileType == SWTileTypeOpen) return YES;
-        if (self.west && self.west.tileType == SWTileTypeOpen
-            && self.west.north && self.west.south.tileType == SWTileTypeOpen) return YES;
+    if (self.south && self.south.tileType == TileTypeOpen) {
+        if (self.east && self.east.tileType == TileTypeOpen
+            && self.east.north && self.east.south.tileType == TileTypeOpen) return YES;
+        if (self.west && self.west.tileType == TileTypeOpen
+            && self.west.north && self.west.south.tileType == TileTypeOpen) return YES;
     }
     
     
@@ -97,7 +97,21 @@
     }] > 0);
 }
 
-- (NSInteger)numOrthogonalOfType:(SWTileType)type
+- (BOOL)isValidForMaze
+{
+    TileType oldTileType = self.tileType;
+    self.tileType = TileTypeOpen;
+    BOOL isValidForMaze = (![self isRoom]);
+//                           [self numOrthogonalPassTest:^BOOL(Tile *t) {
+//                               return [t isRoom];
+//                           }]==0
+//                           && [self numDiagonalPassTest:^BOOL(Tile *t) {
+//                               return [t isRoom];
+//                           }]==0);
+    self.tileType = oldTileType;
+    return isValidForMaze;
+}
+- (NSInteger)numOrthogonalOfType:(TileType)type
 {
     return [self numOrthogonalPassTest:^BOOL(Tile *t) {
         return t.tileType == type;
@@ -113,7 +127,7 @@
     
     return [self numOfTiles:orthogonals passTest:test];
 }
-- (NSInteger)numDiagonalOfType:(SWTileType)type
+- (NSInteger)numDiagonalOfType:(TileType)type
 {
     return [self numDiagonalPassTest:^BOOL(Tile *t) {
         return t.tileType == type;

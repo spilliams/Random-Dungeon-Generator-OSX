@@ -14,7 +14,7 @@
 		0942EB041A5108E700E63679 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0942EB031A5108E700E63679 /* Images.xcassets */; };
 		0942EB071A5108E700E63679 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0942EB051A5108E700E63679 /* Main.storyboard */; };
 		0942EB131A5108E700E63679 /* Random_Dungeon_GeneratorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0942EB121A5108E700E63679 /* Random_Dungeon_GeneratorTests.m */; };
-		0942EB1E1A51094100E63679 /* SWDungeonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0942EB1D1A51094100E63679 /* SWDungeonView.m */; };
+		0942EB1E1A51094100E63679 /* Dungeon.m in Sources */ = {isa = PBXBuildFile; fileRef = 0942EB1D1A51094100E63679 /* Dungeon.m */; };
 		0942EB241A51098D00E63679 /* Tile.m in Sources */ = {isa = PBXBuildFile; fileRef = 0942EB231A51098D00E63679 /* Tile.m */; };
 /* End PBXBuildFile section */
 
@@ -42,8 +42,8 @@
 		0942EB0C1A5108E700E63679 /* Random Dungeon GeneratorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Random Dungeon GeneratorTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0942EB111A5108E700E63679 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0942EB121A5108E700E63679 /* Random_Dungeon_GeneratorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Random_Dungeon_GeneratorTests.m; sourceTree = "<group>"; };
-		0942EB1C1A51094100E63679 /* SWDungeonView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWDungeonView.h; sourceTree = "<group>"; };
-		0942EB1D1A51094100E63679 /* SWDungeonView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWDungeonView.m; sourceTree = "<group>"; };
+		0942EB1C1A51094100E63679 /* Dungeon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dungeon.h; sourceTree = "<group>"; };
+		0942EB1D1A51094100E63679 /* Dungeon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Dungeon.m; sourceTree = "<group>"; };
 		0942EB221A51098D00E63679 /* Tile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tile.h; sourceTree = "<group>"; };
 		0942EB231A51098D00E63679 /* Tile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tile.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -95,8 +95,8 @@
 				0942EB051A5108E700E63679 /* Main.storyboard */,
 				0942EB001A5108E700E63679 /* Random_Dungeon_Generator.xcdatamodeld */,
 				0942EAF61A5108E700E63679 /* Supporting Files */,
-				0942EB1C1A51094100E63679 /* SWDungeonView.h */,
-				0942EB1D1A51094100E63679 /* SWDungeonView.m */,
+				0942EB1C1A51094100E63679 /* Dungeon.h */,
+				0942EB1D1A51094100E63679 /* Dungeon.m */,
 				0942EB221A51098D00E63679 /* Tile.h */,
 				0942EB231A51098D00E63679 /* Tile.m */,
 			);
@@ -229,7 +229,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0942EAFF1A5108E700E63679 /* ViewController.m in Sources */,
-				0942EB1E1A51094100E63679 /* SWDungeonView.m in Sources */,
+				0942EB1E1A51094100E63679 /* Dungeon.m in Sources */,
 				0942EAFC1A5108E700E63679 /* main.m in Sources */,
 				0942EAFA1A5108E700E63679 /* AppDelegate.m in Sources */,
 				0942EB241A51098D00E63679 /* Tile.m in Sources */,
