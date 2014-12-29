@@ -229,6 +229,14 @@
     ((Tile *)self.rows[33][41]).tileType = SWTileTypeOpen;
     ((Tile *)self.rows[39][41]).tileType = SWTileTypeOpen;
     ((Tile *)self.rows[31][43]).tileType = SWTileTypeOpen;
+    for (int r=24; r<35; r++) {
+        for (int c=66; c<71; c++) {
+            if (c != 68
+                || r%2 != 1) {
+                ((Tile *)self.rows[r][c]).tileType = SWTileTypeOpen;
+            }
+        }
+    }
     [self setNeedsDisplay:YES];
 }
 @end
