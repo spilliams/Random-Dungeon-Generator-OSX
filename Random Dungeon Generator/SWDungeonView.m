@@ -24,16 +24,24 @@
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
     
-    [[NSColor blackColor] setFill];
-    NSRectFill(dirtyRect);
-    
     // Drawing code here.
     for (int r=0; r<self.height; r++) {
         for (int c=0; c<self.width; c++) {
-            if (((Tile *)self.rows[r][c]).tileType == SWTileTypeOpen) {
-                [[NSColor greenColor] setFill];
-            } else {
+            Tile *t = ((Tile *)self.rows[r][c]);
+            BOOL colored = NO;
+            
+            if (t.tileType == SWTileTypeClosed) {
+                [[NSColor blackColor] setFill];
+                colored = YES;
+            }
+            
+            if ([t isWall]) {
                 [[NSColor darkGrayColor] setFill];
+                colored = YES;
+            }
+            
+            if (!colored) {
+                [[NSColor redColor] setFill];
             }
             NSRectFill([self rectForTileAtRow:r column:c]);
         }
@@ -57,7 +65,7 @@
         for (int c=0; c<self.width; c++) {
             Tile *t = [Tile new];
             [self.rows[r] addObject:t];
-            
+            if (r==0 && c==0) t.tileType = SWTileTypeOpen;
             [self updateTileAtRow:r column:c withTile:t redraw:reframePerTile];
         }
     }

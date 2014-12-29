@@ -21,4 +21,14 @@ typedef NS_ENUM(NSInteger, SWTileType) {
 @property (nonatomic, weak) Tile *east;
 @property (nonatomic, weak) Tile *west;
 
+
+/// @return Whether this tile is a dead end
+- (BOOL)isDeadEnd;
+/// @return Whether this tile is a corridor
+- (BOOL)isCorridor;
+/// @return Whether this tile has no surrounding walls
+- (BOOL)isUnwalled;
+
+/// @return Whether this tile is the wall of any size space
+- (BOOL)isWall;
 @end

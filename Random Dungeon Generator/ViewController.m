@@ -19,10 +19,10 @@
 {
     [super awakeFromNib];
     
-    // my current screen/storyboard allows for roughly 65 rows and 97 columns
-    // the 14x10 size looks square on this screen.
-    [self.dungeonView createWithDungeonTileSize:NSMakeSize(14, 10) rows:65 columns:97
- reframePerTile:NO];
+    // my current screen/storyboard allows for roughly 65 rows and 136 columns of 10x10 tiles
+    [self.dungeonView createWithDungeonTileSize:NSMakeSize(10, 10)
+                                           rows:65 columns:136
+                                 reframePerTile:NO];
 }
 
 - (void)viewDidLoad {

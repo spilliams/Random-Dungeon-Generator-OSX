@@ -673,7 +673,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView id="Z7t-9w-Tgi" customClass="SWDungeonView">
-                                <rect key="frame" x="-5" y="68" width="485" height="202"/>
+                                <rect key="frame" x="0.0" y="68" width="480" height="202"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                             </customView>
                         </subviews>
