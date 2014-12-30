@@ -8,6 +8,10 @@
 
 #import "Dungeon.h"
 
+#define LOG_MAZE NO
+#define kColorOpen
+#define kColorClosed
+
 @interface Dungeon () {
     unsigned int seed;
 }
@@ -21,8 +25,6 @@
 - (void)handleClickGesture:(NSGestureRecognizer *)clickGR;
 @end
 
-#define kColorOpen
-#define kColorClosed
 
 @implementation Dungeon
 
@@ -61,7 +63,7 @@
             }
             if ([t isCorridor]) {
                 if (colored) { NSLog(@"[DV] corridor is room or wall"); [[NSColor magentaColor] setFill];}
-                else [[NSColor cyanColor] setFill];
+                else [[NSColor lightGrayColor] setFill];
                 colored = YES;
             }
             
@@ -86,23 +88,20 @@
                 drawLowerHalf = YES;
             }
             
-            if (drawLowerHalf) {
-                NSBezierPath *path = [NSBezierPath bezierPath];
-                [path moveToPoint:tileRect.origin];
-                [path lineToPoint:NSMakePoint(tileRect.origin.x + tileRect.size.width,
-                                              tileRect.origin.y + tileRect.size.height)];
-                [path lineToPoint:NSMakePoint(tileRect.origin.x + tileRect.size.width,
-                                              tileRect.origin.y)];
-                [path closePath];
-                [path fill];
-            }
+//            if (drawLowerHalf) {
+//                NSBezierPath *path = [NSBezierPath bezierPath];
+//                [path moveToPoint:tileRect.origin];
+//                [path lineToPoint:NSMakePoint(tileRect.origin.x + tileRect.size.width,
+//                                              tileRect.origin.y + tileRect.size.height)];
+//                [path lineToPoint:NSMakePoint(tileRect.origin.x + tileRect.size.width,
+//                                              tileRect.origin.y)];
+//                [path closePath];
+//                [path fill];
+//            }
             
             if (t.mazeUnsolved) {
-                [[NSColor redColor] setFill];
-                [[NSBezierPath bezierPathWithOvalInRect:NSMakeRect(tileRect.origin.x + tileRect.size.width/4.0,
-                                                                   tileRect.origin.y + tileRect.size.height/4.0,
-                                                                   tileRect.size.width/2.0,
-                                                                   tileRect.size.height/2.0)] fill];
+                [[NSColor cyanColor] setFill];
+                [NSBezierPath fillRect:tileRect];
             }
         }
     }
@@ -250,8 +249,6 @@
     // TODO: implement me!
 }
 
-#define LOG_MAZE YES
-
 - (void)generateMaze
 {
     NSDate *start = [NSDate date];
@@ -296,7 +293,7 @@
 - (void)generateGrowingTreeMaze
 {
     // a little setup
-    BOOL redrawPerTile = NO;
+    BOOL redrawPerTile = YES;
     float newOldThreshold = 0.25; // percentage of the unsolved cells that are "new" or "old"
     typedef NS_ENUM(NSInteger, MazePickType) {
         MazePickTypeNewest,
