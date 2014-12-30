@@ -449,11 +449,11 @@
         MazePickTypeRandom,
         MazePickTypeRandomNew,
         MazePickTypeRandomOld,
-        MazePickTypeOldest
+        MazePickTypeOldest,
+        MazePickTypeRiver
     };
-    // other pick types:
-    // usually pick most recent, sometimes random: high "river" factor but short direct solution
-    MazePickType pickType = MazePickTypeNewest;
+    MazePickType pickType = MazePickTypeRiver;
+    float riverThreshold = 0.05; // only used in MazePickTypeRiver
     
     // pick origin
     Tile *mazeOrigin;
@@ -518,7 +518,19 @@
                 || pickType == MazePickTypeRandomOld)) {
             pickType = MazePickTypeRandom;
         }
-        switch (pickType) {
+        MazePickType tempPickType = pickType;
+        if (pickType == MazePickTypeRiver) {
+            if ((seed%100)/100.0 < riverThreshold) {
+                tempPickType = MazePickTypeRandom;
+            } else {
+                tempPickType = MazePickTypeNewest;
+            }
+        }
+        switch (tempPickType) {
+            case MazePickTypeRiver:
+                // sure it isn't a thrown exception, but waddayagunnado?
+                NSAssert(0==1,@"this case shouldn't come up");
+                break;
             case MazePickTypeNewest:
                 // tile index is already 0
                 break;
