@@ -28,6 +28,28 @@
 
 @implementation Dungeon
 
+- (instancetype)init {
+    if (self = [super init]) {
+        [self commonInit];
+    }
+    return self;
+}
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    if (self = [super initWithCoder:coder]) {
+        [self commonInit];
+    }
+    return self;
+}
+- (instancetype)initWithFrame:(NSRect)frameRect {
+    if (self = [super initWithFrame:frameRect]) {
+        [self commonInit];
+    }
+    return self;
+}
+- (void)commonInit {
+    self.algorithm = MazeGenerationAlgorithmGrowingTree;
+}
+
 - (void)awakeFromNib
 {
     [super awakeFromNib];
@@ -252,7 +274,13 @@
 - (void)generateMaze
 {
     NSDate *start = [NSDate date];
-    [self generateGrowingTreeMaze];
+    
+    switch (self.algorithm) {
+        case MazeGenerationAlgorithmGrowingTree:
+            [self generateGrowingTreeMaze];
+            break;
+    }
+    
     NSTimeInterval elapsed = [[NSDate date] timeIntervalSinceDate:start];
     if (self.delegate
         && [self.delegate conformsToProtocol:@protocol(DungeonDelegate)]

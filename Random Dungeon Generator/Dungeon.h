@@ -15,8 +15,13 @@
 
 @end
 
+typedef NS_ENUM(NSInteger, MazeGenerationAlgorithm) {
+    MazeGenerationAlgorithmGrowingTree
+};
+
 @interface Dungeon : NSView
 @property (nonatomic, weak) IBOutlet id<DungeonDelegate> delegate;
+@property (nonatomic, assign) MazeGenerationAlgorithm algorithm;
 - (void)createWithDungeonTileSize:(NSSize)newTileSize rows:(NSInteger)newRows columns:(NSInteger)newColumns reframePerTile:(BOOL)reframePerTile;
 - (void)updateTileAtRow:(NSInteger)row column:(NSInteger)column withTile:(Tile *)newTile redraw:(BOOL)redraw;
 
