@@ -8,7 +8,9 @@
 
 #import "ViewController.h"
 
-@interface ViewController ()
+@interface ViewController () {
+    BOOL toStep;
+}
 @property (weak) IBOutlet NSTextField *infoLabel;
 @property (nonatomic, strong) IBOutlet Dungeon *dungeonView;
 - (IBAction)resetButtonPushed:(id)sender;
@@ -35,13 +37,20 @@
     // my current screen/storyboard allows for roughly 65 rows and 136 columns of 10x10 tiles
     CGFloat width = 1360;
     CGFloat height = 650;
-    NSSize tileSize = NSMakeSize(100, 100);
+    NSSize tileSize = NSMakeSize(10, 10);
     NSInteger numRows = floor(height / (1.0* tileSize.height));
     NSInteger numColumns = floor(width / (1.0* tileSize.width));
     [self.dungeonView createWithDungeonTileSize:tileSize
                                            rows:numRows
                                         columns:numColumns
                                  reframePerTile:NO];
+}
+
+#pragma mark - Dungeon Delegate
+
+- (void)mazeFinishedInTime:(NSTimeInterval)time
+{
+    [self.infoLabel setStringValue:[NSString stringWithFormat:@"maze time: %f",time]];
 }
 
 #pragma mark - IBActions
@@ -73,12 +82,5 @@
 - (IBAction)mazeButtonPressed:(id)sender {
     NSLog(@"[VC] maze");
     [self.dungeonView generateMaze];
-}
-
-#pragma mark - Dungeon Delegate
-
-- (void)mazeFinishedInTime:(NSTimeInterval)time
-{
-    [self.infoLabel setStringValue:[NSString stringWithFormat:@"maze time: %f",time]];
 }
 @end

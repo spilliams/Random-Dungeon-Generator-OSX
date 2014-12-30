@@ -296,7 +296,7 @@
 - (void)generateGrowingTreeMaze
 {
     // a little setup
-    BOOL redrawPerTile = YES;
+    BOOL redrawPerTile = NO;
     float newOldThreshold = 0.25; // percentage of the unsolved cells that are "new" or "old"
     typedef NS_ENUM(NSInteger, MazePickType) {
         MazePickTypeNewest,
@@ -308,13 +308,6 @@
     // other pick types:
     // usually pick most recent, sometimes random: high "river" factor but short direct solution
     MazePickType pickType = MazePickTypeNewest;
-    typedef NS_ENUM(NSInteger, JunctionProliferation) {
-        JunctionProliferationMinimal,
-        JunctionProliferationSome,
-        JunctionProliferationHELLA,
-        
-    };
-    JunctionProliferation junctions = JunctionProliferationMinimal;
     
     // pick origin
     Tile *mazeOrigin;
@@ -418,54 +411,35 @@
         // for each of them, determine if they're a candidate for expansion
         if (LOG_MAZE) {
             NSLog(@"  %i orthogonals (of t) to check for expansion candidacy", (int)toCheck.count);
-            NSLog(@"  (junction proliferation choice is %i)", (int)junctions);
         }
         
         for (Tile *ortho in toCheck) {
             TileType orthoTileType = ortho.tileType;
             if (orthoTileType != TileTypeClosed) continue;
             
-            BOOL pass = NO; // for the junction test
-            
             if (LOG_MAZE) NSLog(@"    checking orthogonal %i,%i", (int)ortho.x, (int)ortho.y);
             
-            switch (junctions) {
-                case JunctionProliferationMinimal:{
-                    // don't allow orthos which have diagonals that do NOT connect to t
-                    NSInteger diagonalsThatReachT = [ortho numDiagonalPassTest:^BOOL(Tile *diagonalT) {
-                        // this diagonal will reach ortho as long as one of this diagonal's Orthogonals is t
-                        // return
-                        if (diagonalT.tileType == TileTypeClosed) {
-                            // diagonal is closed, it can't possibly reach t
-                            return NO;
-                        }
-                        return ([diagonalT numOrthogonalPassTest:^BOOL(Tile *orthogonalT) {
-                            return orthogonalT == t;
-                        }] > 0);
-                    }];
-                    if (LOG_MAZE) {
-                        NSLog(@"      %i diagonals reach t", (int)diagonalsThatReachT);
-                    }
-                    if (diagonalsThatReachT <= 2) {
-                        pass = YES;
-                    }
-                    break;}
-                case JunctionProliferationSome:
-                    // only allow orthos with no other open orthos themselves
-                    if ([ortho numOrthogonalOfType:TileTypeOpen] == 1) {
-                        pass = YES;
-                    }
-                    break;
-                case JunctionProliferationHELLA:
-                    // heck i don' care
-                    break;
-            }
+            // only accept orthos who have exactly 0 diagonals that don't directly connect to t
+            NSInteger nonConnectedDiagonals = [ortho numDiagonalPassTest:^BOOL(Tile *diagonalT) {
+                // diagonalT will be nonconnected if it has 0 orthogonals that are equal to t
+                if (diagonalT.tileType == TileTypeClosed) return false;
+                
+                NSInteger orthogonalsEqualToT = [diagonalT numOrthogonalPassTest:^BOOL(Tile *orthogonalT) {
+                    return [orthogonalT isEqual:t];
+                }];
+                return orthogonalsEqualToT == 0;
+            }];
+            
+            // make sure it won't make any merges
+            NSInteger numClearOrthogonals = [ortho numOrthogonalOfType:TileTypeOpen];
             
             ortho.tileType = TileTypeOpen;
             BOOL isValidForMaze = ![ortho isRoom] && ![t isRoom];
             ortho.tileType = orthoTileType;
             
-            if (pass && isValidForMaze) {
+            if (nonConnectedDiagonals == 0
+                && numClearOrthogonals == 1
+                && isValidForMaze) {
                 [nextCandidates addObject:ortho];
             }
             
@@ -492,6 +466,7 @@
                                          self.tileSize.height * (t.y-1),
                                          self.tileSize.width * 3.0,
                                          self.tileSize.height * 3.0)];
+//            [NSThread sleepForTimeInterval:1.0];
         }
         operations++;
     }
