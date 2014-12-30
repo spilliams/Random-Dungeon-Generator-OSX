@@ -42,11 +42,19 @@ typedef NS_ENUM(NSInteger, TileType) {
 /// @return Whether this tile is a doorway of a room
 - (BOOL)isDoorway;
 
-- (BOOL)isValidForMaze;
 
+/* The following methods have a bit of DSL in them. Allow me to explain:
+ "Orthogonal" is any tile the player can get to in 1 move from this tile.
+ "Diagonal" is any non-Orthogonal tile that shares perimeter with this tile.
+ "Adjacent" is the union of both Orthogonal and Diagonal sets ("Adjacent" methods here are provided mostly for convenience's sake)
+ */
 - (NSInteger)numOrthogonalOfType:(TileType)type;
-- (NSInteger)numOrthogonalPassTest:(BOOL(^)(Tile *t))test;
 - (NSInteger)numDiagonalOfType:(TileType)type;
+- (NSInteger)numAdjacentOfType:(TileType)type;
+
+- (NSInteger)numOrthogonalPassTest:(BOOL(^)(Tile *t))test;
 - (NSInteger)numDiagonalPassTest:(BOOL(^)(Tile *t))test;
+- (NSInteger)numAdjacentPassTest:(BOOL(^)(Tile *t))test;
+
 - (NSInteger)numOfTiles:(NSArray *)tiles passTest:(BOOL(^)(Tile *t))test;
 @end

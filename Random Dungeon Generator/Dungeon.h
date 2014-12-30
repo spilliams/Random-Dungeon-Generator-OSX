@@ -9,7 +9,14 @@
 #import <Cocoa/Cocoa.h>
 #import "Tile.h"
 
+@protocol DungeonDelegate <NSObject>
+@optional
+- (void)mazeFinishedInTime:(NSTimeInterval)time;
+
+@end
+
 @interface Dungeon : NSView
+@property (nonatomic, weak) IBOutlet id<DungeonDelegate> delegate;
 - (void)createWithDungeonTileSize:(NSSize)newTileSize rows:(NSInteger)newRows columns:(NSInteger)newColumns reframePerTile:(BOOL)reframePerTile;
 - (void)updateTileAtRow:(NSInteger)row column:(NSInteger)column withTile:(Tile *)newTile redraw:(BOOL)redraw;
 

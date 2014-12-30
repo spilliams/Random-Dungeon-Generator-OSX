@@ -7,7 +7,6 @@
 //
 
 #import "ViewController.h"
-#import "Dungeon.h"
 
 @interface ViewController ()
 @property (weak) IBOutlet NSTextField *infoLabel;
@@ -36,7 +35,7 @@
     // my current screen/storyboard allows for roughly 65 rows and 136 columns of 10x10 tiles
     CGFloat width = 1360;
     CGFloat height = 650;
-    NSSize tileSize = NSMakeSize(25, 25);
+    NSSize tileSize = NSMakeSize(100, 100);
     NSInteger numRows = floor(height / (1.0* tileSize.height));
     NSInteger numColumns = floor(width / (1.0* tileSize.width));
     [self.dungeonView createWithDungeonTileSize:tileSize
@@ -44,6 +43,8 @@
                                         columns:numColumns
                                  reframePerTile:NO];
 }
+
+#pragma mark - IBActions
 
 - (IBAction)resetButtonPushed:(id)sender {
     NSLog(@"[VC] reset");
@@ -72,5 +73,12 @@
 - (IBAction)mazeButtonPressed:(id)sender {
     NSLog(@"[VC] maze");
     [self.dungeonView generateMaze];
+}
+
+#pragma mark - Dungeon Delegate
+
+- (void)mazeFinishedInTime:(NSTimeInterval)time
+{
+    [self.infoLabel setStringValue:[NSString stringWithFormat:@"maze time: %f",time]];
 }
 @end

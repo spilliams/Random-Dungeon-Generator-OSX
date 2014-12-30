@@ -250,9 +250,18 @@
     // TODO: implement me!
 }
 
+#define LOG_MAZE YES
+
 - (void)generateMaze
 {
+    NSDate *start = [NSDate date];
     [self generateGrowingTreeMaze];
+    NSTimeInterval elapsed = [[NSDate date] timeIntervalSinceDate:start];
+    if (self.delegate
+        && [self.delegate conformsToProtocol:@protocol(DungeonDelegate)]
+        && [self.delegate respondsToSelector:@selector(mazeFinishedInTime:)]) {
+        [self.delegate mazeFinishedInTime:elapsed];
+    }
 }
 
 #pragma mark - Private Helpers
@@ -299,27 +308,60 @@
     // other pick types:
     // usually pick most recent, sometimes random: high "river" factor but short direct solution
     MazePickType pickType = MazePickTypeNewest;
-    BOOL hellaJunctions = YES;
+    typedef NS_ENUM(NSInteger, JunctionProliferation) {
+        JunctionProliferationMinimal,
+        JunctionProliferationSome,
+        JunctionProliferationHELLA,
+        
+    };
+    JunctionProliferation junctions = JunctionProliferationMinimal;
     
     // pick origin
     Tile *mazeOrigin;
-    while (mazeOrigin == nil) {
-        seed = (unsigned int)[NSNumber numberWithDouble:[NSDate timeIntervalSinceReferenceDate]];
-        seed = rand_r(&seed);
-        long rowIndex = seed%self.rows.count;
-        NSAssert(rowIndex < self.rows.count, @"Row index too large!");
-        NSAssert(rowIndex >= 0, @"Row index too small!");
-        NSArray *randomRow = self.rows[rowIndex];
-        seed = rand_r(&seed);
-        long columnIndex = seed%randomRow.count;
-        NSAssert(columnIndex < randomRow.count, @"Column index too large!");
-        NSAssert(columnIndex >= 0, @"Column index too small!");
-        Tile *candidate = randomRow[columnIndex];
-        if ([candidate isValidForMaze]) {
-            mazeOrigin = candidate;
+    
+    // first, check to see if the origin has been picked by the user
+    // pick the first non-room tile you find
+    for (int r=0; r<self.height; r++) {
+        for (int c=0; c<self.width; c++) {
+            Tile *t = ((Tile *)self.rows[r][c]);
+            if (t.tileType == TileTypeOpen
+                && [t numAdjacentOfType:TileTypeOpen] == 0) {
+                NSLog(@"[DV] using pre-selected maze origin %i,%i", (int)t.x, (int)t.y);
+                mazeOrigin = t;
+                continue;
+            }
+        }
+        if (mazeOrigin != nil) continue;
+    }
+    
+    if (mazeOrigin == nil) {
+        int guesses = 0;
+        while (mazeOrigin == nil && guesses < self.width*self.height) {
+            seed = (unsigned int)[NSNumber numberWithDouble:[NSDate timeIntervalSinceReferenceDate]];
+            seed = rand_r(&seed);
+            long rowIndex = seed%self.rows.count;
+            NSAssert(rowIndex < self.rows.count, @"Row index too large!");
+            NSAssert(rowIndex >= 0, @"Row index too small!");
+            NSArray *randomRow = self.rows[rowIndex];
+            seed = rand_r(&seed);
+            long columnIndex = seed%randomRow.count;
+            NSAssert(columnIndex < randomRow.count, @"Column index too large!");
+            NSAssert(columnIndex >= 0, @"Column index too small!");
+            Tile *candidate = randomRow[columnIndex];
+            if (candidate.tileType == TileTypeClosed
+                && [candidate numAdjacentOfType:TileTypeOpen == 0]) {
+                NSLog(@"[DV] picked random maze origin %i,%i", (int)candidate.x, (int)candidate.y);
+                mazeOrigin = candidate;
+            }
+            
+            guesses++;
+        }
+        if (mazeOrigin == nil) {
+            NSLog(@"[DV] couldn't find a valid origin. aborting");
+            return;
         }
     }
-    NSLog(@"[DV] picked maze origin");
+    
     mazeOrigin.tileType = TileTypeOpen;
     mazeOrigin.mazeUnsolved = YES;
     if (redrawPerTile) [self setNeedsDisplay:YES];
@@ -360,35 +402,83 @@
         NSAssert(tileIndex >= 0, @"Tile index too small!");
         NSAssert(tileIndex < unsolved.count, @"Tile index too large!");
         Tile *t = unsolved[tileIndex];
+        if (LOG_MAZE) NSLog(@"[DV] picked unsolved %i,%i", (int)t.x, (int)t.y);
         
         // carve an unmade cell next to it
         // assume t is open, and will return YES to `-isCorridor`.
         // assume nothing about its orthogonals though
         NSMutableArray *nextCandidates = [NSMutableArray new];
+        // first get all the non-nil orthogonals from t
         NSMutableArray *toCheck = [NSMutableArray new];
         if (t.north) [toCheck addObject:t.north];
-        if (t.south && t.south.tileType == TileTypeClosed) [toCheck addObject:t.south];
-        if (t.east  && t.east.tileType  == TileTypeClosed) [toCheck addObject:t.east];
-        if (t.west  && t.west.tileType  == TileTypeClosed) [toCheck addObject:t.west];
+        if (t.south) [toCheck addObject:t.south];
+        if (t.east) [toCheck addObject:t.east];
+        if (t.west) [toCheck addObject:t.west];
+        
+        // for each of them, determine if they're a candidate for expansion
+        if (LOG_MAZE) {
+            NSLog(@"  %i orthogonals (of t) to check for expansion candidacy", (int)toCheck.count);
+            NSLog(@"  (junction proliferation choice is %i)", (int)junctions);
+        }
+        
         for (Tile *ortho in toCheck) {
-            if (hellaJunctions) {
-                if (ortho.tileType == TileTypeClosed
-                    && [ortho isValidForMaze]) {
-                    [nextCandidates addObject:ortho];
-                }
-            } else {
-                if (ortho.tileType == TileTypeClosed
-                    && [ortho numOrthogonalOfType:TileTypeOpen] == 1) {
-                    [nextCandidates addObject:ortho];
-                }
+            TileType orthoTileType = ortho.tileType;
+            if (orthoTileType != TileTypeClosed) continue;
+            
+            BOOL pass = NO; // for the junction test
+            
+            if (LOG_MAZE) NSLog(@"    checking orthogonal %i,%i", (int)ortho.x, (int)ortho.y);
+            
+            switch (junctions) {
+                case JunctionProliferationMinimal:{
+                    // don't allow orthos which have diagonals that do NOT connect to t
+                    NSInteger diagonalsThatReachT = [ortho numDiagonalPassTest:^BOOL(Tile *diagonalT) {
+                        // this diagonal will reach ortho as long as one of this diagonal's Orthogonals is t
+                        // return
+                        if (diagonalT.tileType == TileTypeClosed) {
+                            // diagonal is closed, it can't possibly reach t
+                            return NO;
+                        }
+                        return ([diagonalT numOrthogonalPassTest:^BOOL(Tile *orthogonalT) {
+                            return orthogonalT == t;
+                        }] > 0);
+                    }];
+                    if (LOG_MAZE) {
+                        NSLog(@"      %i diagonals reach t", (int)diagonalsThatReachT);
+                    }
+                    if (diagonalsThatReachT <= 2) {
+                        pass = YES;
+                    }
+                    break;}
+                case JunctionProliferationSome:
+                    // only allow orthos with no other open orthos themselves
+                    if ([ortho numOrthogonalOfType:TileTypeOpen] == 1) {
+                        pass = YES;
+                    }
+                    break;
+                case JunctionProliferationHELLA:
+                    // heck i don' care
+                    break;
+            }
+            
+            ortho.tileType = TileTypeOpen;
+            BOOL isValidForMaze = ![ortho isRoom] && ![t isRoom];
+            ortho.tileType = orthoTileType;
+            
+            if (pass && isValidForMaze) {
+                [nextCandidates addObject:ortho];
             }
             
         }
+        
+        // out of the candidates, pick a random one
         if (nextCandidates.count == 0) {
+            if (LOG_MAZE) NSLog(@"  no orthogonal candidates, removing t");
             // no candidates for continuing, so this tile is solved
             [unsolved removeObject:t];
             t.mazeUnsolved = NO;
         } else {
+            if (LOG_MAZE) NSLog(@"  %i orthogonal candidates", (int)nextCandidates.count);
             seed = rand_r(&seed);
             Tile *next = nextCandidates[seed%nextCandidates.count];
             [next setTileType:TileTypeOpen];
@@ -396,11 +486,7 @@
             [unsolved insertObject:next atIndex:0];
         }
         
-        if (![t isValidForMaze]) {
-            [unsolved removeObject:t];
-            t.mazeUnsolved = NO;
-        }
-        
+        // redraw just the relevant rectangle
         if (redrawPerTile) {
             [self displayRect:NSMakeRect(self.tileSize.width * (t.x-1),
                                          self.tileSize.height * (t.y-1),

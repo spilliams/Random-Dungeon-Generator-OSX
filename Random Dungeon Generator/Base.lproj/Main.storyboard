@@ -675,6 +675,9 @@
                             <customView id="Z7t-9w-Tgi" customClass="Dungeon">
                                 <rect key="frame" x="0.0" y="68" width="480" height="202"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="XfG-lQ-9wD" id="C2S-Ve-fbW"/>
+                                </connections>
                             </customView>
                             <button verticalHuggingPriority="750" id="eLQ-9i-4Rm">
                                 <rect key="frame" x="14" y="13" width="82" height="32"/>
@@ -721,9 +724,9 @@
                                 </connections>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="kUe-3m-kN4">
-                                <rect key="frame" x="424" y="22" width="38" height="17"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="Qoi-Ea-rt0">
+                                <rect key="frame" x="327" y="22" width="135" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Label" id="Qoi-Ea-rt0">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

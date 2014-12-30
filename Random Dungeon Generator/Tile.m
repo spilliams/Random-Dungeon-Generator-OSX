@@ -97,20 +97,23 @@
     }] > 0);
 }
 
-- (BOOL)isValidForMaze
-{
-    TileType oldTileType = self.tileType;
-    self.tileType = TileTypeOpen;
-    BOOL isValidForMaze = (![self isRoom]);
-    self.tileType = oldTileType;
-    return isValidForMaze;
-}
 - (NSInteger)numOrthogonalOfType:(TileType)type
 {
     return [self numOrthogonalPassTest:^BOOL(Tile *t) {
         return t.tileType == type;
     }];
 }
+- (NSInteger)numDiagonalOfType:(TileType)type
+{
+    return [self numDiagonalPassTest:^BOOL(Tile *t) {
+        return t.tileType == type;
+    }];
+}
+- (NSInteger)numAdjacentOfType:(TileType)type
+{
+    return [self numOrthogonalOfType:type] + [self numDiagonalOfType:type];
+}
+
 - (NSInteger)numOrthogonalPassTest:(BOOL(^)(Tile *t))test
 {
     NSMutableArray *orthogonals = [NSMutableArray new];
@@ -120,12 +123,6 @@
     if (self.west != nil) [orthogonals addObject:self.west];
     
     return [self numOfTiles:orthogonals passTest:test];
-}
-- (NSInteger)numDiagonalOfType:(TileType)type
-{
-    return [self numDiagonalPassTest:^BOOL(Tile *t) {
-        return t.tileType == type;
-    }];
 }
 - (NSInteger)numDiagonalPassTest:(BOOL(^)(Tile *t))test
 {
@@ -149,6 +146,11 @@
     
     return [self numOfTiles:diagonals passTest:test];
 }
+- (NSInteger)numAdjacentPassTest:(BOOL (^)(Tile *))test
+{
+    return [self numOrthogonalPassTest:test] + [self numDiagonalPassTest:test];
+}
+
 - (NSInteger)numOfTiles:(NSArray *)tiles passTest:(BOOL(^)(Tile *t))test
 {
     NSInteger count = 0;
