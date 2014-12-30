@@ -97,30 +97,15 @@
             NSRect tileRect = [self rectForTileAtRow:r column:c];
             [NSBezierPath fillRect:tileRect];
             
-            BOOL drawLowerHalf = NO;
-            
-            if ([t isCorridorJunction]) {
-                [[NSColor whiteColor] setFill];
-                drawLowerHalf = YES;
-            }
+//            if ([t isCorridorJunction]) {
+//                [[NSColor whiteColor] setFill];
+//            }
             if ([t isDeadEnd]) {
-                [[NSColor purpleColor] setFill];
-                drawLowerHalf = YES;
+                [[[NSColor purpleColor] colorWithAlphaComponent:0.5] setFill];
+                [NSBezierPath fillRect:tileRect];
             }
-            if ([t isDoorway]) {
-                [[NSColor brownColor] setFill];
-                drawLowerHalf = YES;
-            }
-            
-//            if (drawLowerHalf) {
-//                NSBezierPath *path = [NSBezierPath bezierPath];
-//                [path moveToPoint:tileRect.origin];
-//                [path lineToPoint:NSMakePoint(tileRect.origin.x + tileRect.size.width,
-//                                              tileRect.origin.y + tileRect.size.height)];
-//                [path lineToPoint:NSMakePoint(tileRect.origin.x + tileRect.size.width,
-//                                              tileRect.origin.y)];
-//                [path closePath];
-//                [path fill];
+//            if ([t isDoorway]) {
+//                [[NSColor brownColor] setFill];
 //            }
             
             if (t.mazeUnsolved) {
@@ -413,8 +398,6 @@
 
 - (void)generateDoors
 {
-    // FIXME: some rooms end up with 0 doors!
-    
     // assumes that self.rooms is populated with some `[NSValue valueWithRect:]`s
     // and that maze has already been run (won't do anything otherwise)
     
@@ -426,19 +409,19 @@
         Tile *t = self.rows[(int)roomRect.origin.y][(int)roomRect.origin.x-1];
         for (int i=0; i<roomRect.size.height; i++) {
             if ([self tileIsBetweenDoorAndCorridor:t]) [candidates addObject:t];
-            t = t.north;
+            t = t.south;
         }
-        t = t.north.east;
+        t = t.east;
         for (int i=0; i<roomRect.size.width; i++) {
             if ([self tileIsBetweenDoorAndCorridor:t]) [candidates addObject:t];
             t = t.east;
         }
-        t = t.east.south;
+        t = t.north;
         for (int i=0; i<roomRect.size.height; i++) {
             if ([self tileIsBetweenDoorAndCorridor:t]) [candidates addObject:t];
             t = t.south;
         }
-        t = t.south.west;
+        t = t.west;
         for (int i=0; i<roomRect.size.width; i++) {
             if ([self tileIsBetweenDoorAndCorridor:t]) [candidates addObject:t];
             t = t.west;
@@ -446,7 +429,7 @@
         
         // pick a random number between 1 and 4 doors
         seed = rand_r(&seed);
-        int numDoors = seed%4 + 2;
+        int numDoors = seed%3 + 1;
         numDoors = MIN((int)candidates.count, numDoors);
         
         while (numDoors > 0) {
