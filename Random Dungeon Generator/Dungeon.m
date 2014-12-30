@@ -440,8 +440,9 @@
 
 - (void)generateGrowingTreeMaze
 {
-    // a little setup
+    // givens:
     BOOL redrawPerTile = YES;
+    BOOL avoidEdges = YES;
     float newOldThreshold = 0.25; // percentage of the unsolved cells that are "new" or "old"
     typedef NS_ENUM(NSInteger, MazePickType) {
         MazePickTypeNewest,
@@ -562,11 +563,25 @@
         
         for (Tile *ortho in toCheck) {
             TileType orthoTileType = ortho.tileType;
+            // Rule 1: ortho must be closed
             if (orthoTileType != TileTypeClosed) continue;
             
             if (LOG_MAZE) NSLog(@"    checking orthogonal %i,%i", (int)ortho.x, (int)ortho.y);
             
-            // only accept orthos who have exactly 0 diagonals that don't directly connect to t
+            // Rule 2: avoid edges if necessary
+            if (avoidEdges) {
+                // assume that if this tile has fewer than 8 adjacents, it is on an edge
+                NSInteger numAdjacents = [ortho numAdjacentPassTest:^BOOL(Tile *t) {
+                    return YES;
+                }];
+                if (numAdjacents < 8) continue;
+            }
+            
+            // Rule 3: Make sure clearing this ortho won't make any merges
+            NSInteger numClearOrthogonals = [ortho numOrthogonalOfType:TileTypeOpen];
+            if (numClearOrthogonals != 1) continue;
+            
+            // Rule 4: Only accept orthos who have exactly 0 diagonals that don't directly connect to t
             NSInteger nonConnectedDiagonals = [ortho numDiagonalPassTest:^BOOL(Tile *diagonalT) {
                 // diagonalT will be nonconnected if it has 0 orthogonals that are equal to t
                 if (diagonalT.tileType == TileTypeClosed) return false;
@@ -576,20 +591,15 @@
                 }];
                 return orthogonalsEqualToT == 0;
             }];
+            if (nonConnectedDiagonals != 0) continue;
             
-            // make sure it won't make any merges
-            NSInteger numClearOrthogonals = [ortho numOrthogonalOfType:TileTypeOpen];
-            
+            // Rule 5: Make sure clearing this ortho won't turn it (or t) into a room
             ortho.tileType = TileTypeOpen;
             BOOL isValidForMaze = ![ortho isRoom] && ![t isRoom];
             ortho.tileType = orthoTileType;
+            if (!isValidForMaze) continue;
             
-            if (nonConnectedDiagonals == 0
-                && numClearOrthogonals == 1
-                && isValidForMaze) {
-                [nextCandidates addObject:ortho];
-            }
-            
+            [nextCandidates addObject:ortho];
         }
         
         // out of the candidates, pick a random one
