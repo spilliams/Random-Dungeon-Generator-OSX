@@ -30,15 +30,10 @@
 
 @implementation ViewController
 
-- (void)awakeFromNib
-{
-    [super awakeFromNib];
-    
-    [self reinitializeDungeon];
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    [self reinitializeDungeon];
 }
 
 - (void)reinitializeDungeon

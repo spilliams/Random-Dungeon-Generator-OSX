@@ -212,9 +212,9 @@
     // I probably made this more complicated than it needed to be...
     
     // givens
-    float roomDensity = 0.25; // the percentage of total floor space that should be room in the end
+    float roomDensity = 0.2; // the percentage of total floor space that should be room in the end
     int ballparkNRooms = 10; // determines the average size of the rooms (this number is just a ballpark of the final number of rooms!)
-    float targetAspectRatio = 10; // ie the most oblong room's ratio of width:height. 1 means all square rooms, 0 and infinity are bad. Negative numbers are untested...
+    float targetAspectRatio = 16/9.0; // ie the most oblong room's ratio of width:height. 1 means all square rooms, 0 and infinity are bad. Negative numbers are untested...
     int roomPlacementTriesMax = 15;
     
     // derived
@@ -270,7 +270,7 @@
             BOOL collision = NO;
             for (NSValue *v in self.rooms) {
                 NSRect collider = [v rectValue];
-                int buffer = 2;
+                int buffer = 3;
                 collider = NSMakeRect(collider.origin.x-buffer,
                                       collider.origin.y-buffer,
                                       collider.size.width+buffer*2,
