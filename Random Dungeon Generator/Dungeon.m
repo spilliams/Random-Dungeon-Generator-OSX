@@ -269,7 +269,91 @@
 
 - (void)generateRooms
 {
-    // TODO: implement me!
+    // TODO: debug this. infinite loop right now?
+    // I probably made this more complicated than it needed to be...
+    
+    // givens
+    BOOL redrawPerRoom = YES;
+    float roomDensity = 0.4; // the percentage of total floor space that should be room in the end
+    int ballparkNRooms = 10; // determines the average size of the rooms (this number is just a ballpark of the final number of rooms!)
+    float targetAspectRatio = 16/9.0; // ie the most oblong room's ratio of width:height. 1 means all square rooms, 0 and infinity are bad. Negative numbers are untested...
+    int roomPlacementTriesMax = 15;
+    
+    // derived
+    int totalRoomSquares = self.width * self.height * roomDensity;
+    float squaresPerRoom = totalRoomSquares / ((float)ballparkNRooms);
+    float minAspectRatio = MIN(targetAspectRatio, 1.0/targetAspectRatio);
+    float maxAspectRatio = MAX(targetAspectRatio, 1.0/targetAspectRatio);
+    
+    int countRoomSquares = 0;
+    
+    NSMutableArray *rooms = [NSMutableArray new];
+    
+    while (countRoomSquares < totalRoomSquares) {
+        
+        if (seed == 0) seed = (unsigned int)[NSNumber numberWithDouble:[NSDate timeIntervalSinceReferenceDate]];
+        seed = rand_r(&seed);
+        float precision = 100.0;
+        // basically, pick a random aspect ratio between min and max
+        float roomAspectRatio = (seed%(int)((maxAspectRatio - minAspectRatio)*precision))/precision + minAspectRatio;
+        
+        // roomH * roomW ~= squaresPerRoom
+        // if roomAspectRatio > 1, room is wider than it is tall
+        // roomW = roomH * roomAspectRatio
+        // roomH * (roomH * roomAspectRatio) ~= squaresPerRoom
+        int roomH = (int)round(sqrt(squaresPerRoom / roomAspectRatio));
+        int roomW = (int)ceil(squaresPerRoom / roomH);
+        
+        NSRect room = NSZeroRect;
+        room.size = NSMakeSize(roomW, roomH);
+        
+        // attempt to place room
+        BOOL roomPlaced = NO;
+        int roomPlacementTries = 0;
+        while (!roomPlaced && roomPlacementTries < roomPlacementTriesMax) {
+            
+            // pick an origin that allows the room to fit within the dungeon bounds
+            int xMin = 1;
+            int yMin = 1;
+            int xMax = self.width - room.size.width - 1;
+            int yMax = self.height - room.size.height - 1;
+            seed = rand_r(&seed);
+            room.origin.x = (seed%(xMax-xMin)) + xMin;
+            room.origin.y = (seed%(yMax-yMin)) + yMin;
+            
+            // does room collide with any of the other rooms? Keep in mind we need to leave wall space between them
+            BOOL collision = NO;
+            for (NSValue *v in rooms) {
+                NSRect collider = [v rectValue];
+                int buffer = 2;
+                collider = NSMakeRect(collider.origin.x-buffer,
+                                      collider.origin.y-buffer,
+                                      collider.size.width+buffer*2,
+                                      collider.size.height+buffer*2);
+                if (CGRectIntersectsRect(room, collider)) {
+                    collision = YES;
+                    continue;
+                }
+            }
+            
+            if (!collision) {
+                // it's a go! carve out the room
+                for (int r=room.origin.y; r<room.origin.y+room.size.height; r++) {
+                    for (int c=room.origin.x; c<room.origin.x+room.size.width; c++) {
+                        ((Tile *)self.rows[r][c]).tileType = TileTypeOpen;
+                    }
+                }
+                if (redrawPerRoom) [self displayRect:NSMakeRect(room.origin.x-1, room.origin.y-1, room.size.width+2, room.size.height+2)];
+                [rooms addObject:[NSValue valueWithRect:room]];
+                roomPlaced = YES;
+            }
+            
+            roomPlacementTries++;
+        }
+        if (roomPlaced) {
+            countRoomSquares += roomH * roomW;
+        }
+    }
 }
 
 - (void)generateMaze
@@ -356,7 +440,7 @@
     if (mazeOrigin == nil) {
         int guesses = 0;
         while (mazeOrigin == nil && guesses < self.width*self.height) {
-            seed = (unsigned int)[NSNumber numberWithDouble:[NSDate timeIntervalSinceReferenceDate]];
+            if (seed == 0) seed = (unsigned int)[NSNumber numberWithDouble:[NSDate timeIntervalSinceReferenceDate]];
             seed = rand_r(&seed);
             long rowIndex = seed%self.rows.count;
             NSAssert(rowIndex < self.rows.count, @"Row index too large!");
