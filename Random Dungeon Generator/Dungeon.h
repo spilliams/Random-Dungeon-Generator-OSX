@@ -48,11 +48,13 @@ typedef NS_ENUM(NSInteger, MazeTesellation) {
 @property (nonatomic, weak) IBOutlet id<DungeonDelegate> delegate;
 @property (nonatomic, assign) MazeGenerationAlgorithm algorithm;
 @property (nonatomic, assign) MazeTesellation tesellation;
-- (void)createWithDungeonTileSize:(NSSize)newTileSize rows:(NSInteger)newRows columns:(NSInteger)newColumns reframePerTile:(BOOL)reframePerTile;
+- (void)createWithTileSize:(NSSize)newTileSize rows:(NSInteger)newRows columns:(NSInteger)newColumns reframePerTile:(BOOL)reframePerTile;
 - (void)updateTileAtRow:(NSInteger)row column:(NSInteger)column withTile:(Tile *)newTile redraw:(BOOL)redraw;
 
 - (void)setupForRooms;
 - (void)setupForTests;
 - (void)generateRooms;
 - (void)generateMaze;
+- (void)generateDoors;
+- (void)pruneDeadEnds;
 @end

@@ -17,6 +17,8 @@
 - (IBAction)testButtonPressed:(id)sender;
 - (IBAction)roomsButtonPressed:(id)sender;
 - (IBAction)mazeButtonPressed:(id)sender;
+- (IBAction)doorsButtonPressed:(id)sender;
+- (IBAction)pruneButtonPressed:(id)sender;
 @end
 
 @implementation ViewController
@@ -40,7 +42,7 @@
     NSSize tileSize = NSMakeSize(25, 25);
     NSInteger numRows = floor(height / (1.0* tileSize.height));
     NSInteger numColumns = floor(width / (1.0* tileSize.width));
-    [self.dungeonView createWithDungeonTileSize:tileSize
+    [self.dungeonView createWithTileSize:tileSize
                                            rows:numRows
                                         columns:numColumns
                                  reframePerTile:NO];
@@ -67,7 +69,7 @@
     NSSize tileSize = NSMakeSize(10, 10);
     NSInteger numRows = floor(height / (1.0* tileSize.height));
     NSInteger numColumns = floor(width / (1.0* tileSize.width));
-    [self.dungeonView createWithDungeonTileSize:tileSize
+    [self.dungeonView createWithTileSize:tileSize
                                            rows:numRows
                                         columns:numColumns
                                  reframePerTile:NO];
@@ -83,5 +85,13 @@
 - (IBAction)mazeButtonPressed:(id)sender {
     NSLog(@"[VC] maze");
     [self.dungeonView generateMaze];
+}
+
+- (IBAction)doorsButtonPressed:(id)sender {
+    [self.dungeonView generateDoors];
+}
+
+- (IBAction)pruneButtonPressed:(id)sender {
+    [self.dungeonView pruneDeadEnds];
 }
 @end

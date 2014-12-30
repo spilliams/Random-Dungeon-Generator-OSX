@@ -16,6 +16,7 @@
     unsigned int seed;
 }
 @property (nonatomic, strong) NSMutableArray *rows;
+@property (nonatomic, strong) NSMutableArray *rooms;
 @property (nonatomic, assign) NSInteger width;
 @property (nonatomic, assign) NSInteger height;
 
@@ -130,7 +131,7 @@
     }
 }
 
-- (void)createWithDungeonTileSize:(NSSize)newTileSize rows:(NSInteger)newRows columns:(NSInteger)newColumns reframePerTile:(BOOL)reframePerTile
+- (void)createWithTileSize:(NSSize)newTileSize rows:(NSInteger)newRows columns:(NSInteger)newColumns reframePerTile:(BOOL)reframePerTile
 {
     self.width = newColumns;
     self.height = newRows;
@@ -269,6 +270,7 @@
 
 - (void)setupForRooms
 {
+    self.rooms = [NSMutableArray new];
     [self makeRoomStartPoint:NSMakePoint(4, 5) endPoint:NSMakePoint(10, 10)];
     [self makeRoomStartPoint:NSMakePoint(21, 13) endPoint:NSMakePoint(16, 19)];
     [self makeRoomStartPoint:NSMakePoint(30, 22) endPoint:NSMakePoint(20, 25)];
@@ -298,13 +300,13 @@
             ((Tile *)self.rows[r][c]).tileType = TileTypeOpen;
         }
     }
-    [self display];
-    [NSThread sleepForTimeInterval:0.5];
+    [self.rooms addObject:[NSValue valueWithRect:rect]];
+    [self setNeedsDisplay:YES];
 }
 
 - (void)generateRooms
 {
-    // TODO: debug this. infinite loop right now?
+    // FIXME: debug this. infinite loop right now?
     // I probably made this more complicated than it needed to be...
     
     // givens
@@ -409,6 +411,100 @@
     }
 }
 
+- (void)generateDoors
+{
+    // FIXME: some rooms end up with 0 doors!
+    
+    // assumes that self.rooms is populated with some `[NSValue valueWithRect:]`s
+    // and that maze has already been run (won't do anything otherwise)
+    
+    for (NSValue *valueWithRect in self.rooms) {
+        NSRect roomRect = [valueWithRect rectValue];
+        NSMutableArray *candidates = [NSMutableArray new];
+        
+        // walk the perimeter of the room, asking each tile if it has space on the other side
+        Tile *t = self.rows[(int)roomRect.origin.y][(int)roomRect.origin.x-1];
+        for (int i=0; i<roomRect.size.height; i++) {
+            if ([self tileIsBetweenDoorAndCorridor:t]) [candidates addObject:t];
+            t = t.north;
+        }
+        t = t.north.east;
+        for (int i=0; i<roomRect.size.width; i++) {
+            if ([self tileIsBetweenDoorAndCorridor:t]) [candidates addObject:t];
+            t = t.east;
+        }
+        t = t.east.south;
+        for (int i=0; i<roomRect.size.height; i++) {
+            if ([self tileIsBetweenDoorAndCorridor:t]) [candidates addObject:t];
+            t = t.south;
+        }
+        t = t.south.west;
+        for (int i=0; i<roomRect.size.width; i++) {
+            if ([self tileIsBetweenDoorAndCorridor:t]) [candidates addObject:t];
+            t = t.west;
+        }
+        
+        // pick a random number between 1 and 4 doors
+        seed = rand_r(&seed);
+        int numDoors = seed%4 + 2;
+        numDoors = MIN((int)candidates.count, numDoors);
+        
+        while (numDoors > 0) {
+            seed = rand_r(&seed);
+            int i = seed%candidates.count;
+            Tile *door = candidates[i];
+            if (door.tileType == TileTypeClosed) {
+                door.tileType = TileTypeOpen;
+                [candidates removeObject:door];
+                numDoors--;
+            }
+        }
+    }
+    [self setNeedsDisplay:YES];
+}
+- (BOOL)tileIsBetweenDoorAndCorridor:(Tile *)tile
+{
+    return (([tile.north isRoom] && [tile.south isCorridor])
+            || ([tile.east isRoom] && [tile.west isCorridor])
+            || ([tile.south isRoom] && [tile.north isCorridor])
+            || ([tile.west isRoom] && [tile.east isCorridor]));
+}
+
+- (void)pruneDeadEnds
+{
+    // givens
+    BOOL redrawPerTile = YES;
+    
+    // 1: round up all of the current dead ends
+    NSMutableArray *deadEnds = [NSMutableArray new];
+    for (int r=0; r<self.height; r++) {
+        for (int c=0; c<self.width; c++) {
+            Tile *t = self.rows[r][c];
+            if ([t isDeadEnd]) [deadEnds addObject:t];
+        }
+    }
+    
+    // 2: while deadEnds has stuff in it, take one out, close it, and check its neighbors
+    __block void(^checkForDeadEnd)(Tile *t) = ^(Tile *t) {
+        if (t.tileType == TileTypeOpen
+            && [t isDeadEnd]
+            && ![deadEnds containsObject:t]) [deadEnds insertObject:t atIndex:0];
+    };
+    while (deadEnds.count > 0) {
+        Tile *t = [deadEnds objectAtIndex:0];
+        [deadEnds removeObject:t];
+        t.tileType = TileTypeClosed;
+        checkForDeadEnd(t.north);
+        checkForDeadEnd(t.east);
+        checkForDeadEnd(t.south);
+        checkForDeadEnd(t.west);
+        if (redrawPerTile) {
+            [self display];
+        }
+    }
+    [self setNeedsDisplay:YES];
+}
+
 #pragma mark - Private Helpers
 
 - (NSRect)rectForTileAtRow:(NSInteger)row column:(NSInteger)column
@@ -441,7 +537,7 @@
 - (void)generateGrowingTreeMaze
 {
     // givens:
-    BOOL redrawPerTile = YES;
+    BOOL redrawPerTile = NO;
     BOOL avoidEdges = YES;
     float newOldThreshold = 0.25; // percentage of the unsolved cells that are "new" or "old"
     typedef NS_ENUM(NSInteger, MazePickType) {
