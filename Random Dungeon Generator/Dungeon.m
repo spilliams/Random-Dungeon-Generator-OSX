@@ -48,6 +48,7 @@
 }
 - (void)commonInit {
     self.algorithm = MazeGenerationAlgorithmGrowingTree;
+    self.tesellation = MazeTesellationOrthogonal;
 }
 
 - (void)awakeFromNib

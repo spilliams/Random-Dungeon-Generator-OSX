@@ -15,13 +15,39 @@
 
 @end
 
+// For explanation of what all this means, check out
+// see http://www.astrolog.org/labyrnth/algrithm.htm
+
 typedef NS_ENUM(NSInteger, MazeGenerationAlgorithm) {
-    MazeGenerationAlgorithmGrowingTree
+    MazeGenerationAlgorithmGrowingTree,
+    // recursive backtracker
+    // prim's
+    // kruskal's
+    // aldous-broder
+    // wilson's
+    // hunt and kill
+    // eller's
+    // recursive division
+    // binary tree
+    // sidewinder
 };
+
+/// The "shape" of the maze
+typedef NS_ENUM(NSInteger, MazeTesellation) {
+    MazeTesellationOrthogonal,  // "normal", "rectilinear", "square", "Cartesian"
+//    MazeTesellationDelta,       // "triangular"
+//    MazeTesellationSigma,       // "hexagonal"
+//    MazeTesellationTheta,       // "concentric rings", "minotaur-style"
+//    MazeTesellationUpsilon,     // "octagons and squares"
+//    MazeTesellationZeta,        // "square grid but with orthogonal and diagonal passages"
+};
+// leaves out "Crack", where there's no discernable order (requires too many pixels),
+// and "Fractal", where the maze is a fractal! (too tedious...)
 
 @interface Dungeon : NSView
 @property (nonatomic, weak) IBOutlet id<DungeonDelegate> delegate;
 @property (nonatomic, assign) MazeGenerationAlgorithm algorithm;
+@property (nonatomic, assign) MazeTesellation tesellation;
 - (void)createWithDungeonTileSize:(NSSize)newTileSize rows:(NSInteger)newRows columns:(NSInteger)newColumns reframePerTile:(BOOL)reframePerTile;
 - (void)updateTileAtRow:(NSInteger)row column:(NSInteger)column withTile:(Tile *)newTile redraw:(BOOL)redraw;
 
