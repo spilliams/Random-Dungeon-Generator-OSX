@@ -61,8 +61,6 @@ typedef NS_ENUM(NSInteger, MazePickType) {
 - (void)createWithTileSize:(NSSize)newTileSize rows:(NSInteger)newRows columns:(NSInteger)newColumns reframePerTile:(BOOL)reframePerTile;
 - (void)updateTileAtRow:(NSInteger)row column:(NSInteger)column withTile:(Tile *)newTile redraw:(BOOL)redraw;
 
-//- (void)setupForRooms;
-//- (void)setupForTests;
 - (void)generateRoomsRedrawPerRoom:(BOOL)redrawPerRoom;;
 - (void)generateMazeRedrawPerTile:(BOOL)redrawPerTile;
 - (void)generateDoors;

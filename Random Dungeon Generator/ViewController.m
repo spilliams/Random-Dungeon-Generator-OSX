@@ -18,7 +18,6 @@
 @property (weak) IBOutlet NSTextField *tileHeightNumberField;
 
 - (IBAction)resetButtonPushed:(id)sender;
-//- (IBAction)testButtonPressed:(id)sender;
 - (IBAction)roomsButtonPressed:(id)sender;
 - (IBAction)mazeButtonPressed:(id)sender;
 - (IBAction)doorsButtonPressed:(id)sender;
@@ -69,20 +68,6 @@
     NSLog(@"[VC] reset");
     [self reinitializeDungeon];
 }
-
-//- (IBAction)testButtonPressed:(id)sender {
-//    NSLog(@"[VC] test");
-//    CGFloat width = 1360;
-//    CGFloat height = 650;
-//    NSSize tileSize = NSMakeSize(10, 10);
-//    NSInteger numRows = floor(height / (1.0* tileSize.height));
-//    NSInteger numColumns = floor(width / (1.0* tileSize.width));
-//    [self.dungeonView createWithTileSize:tileSize
-//                                           rows:numRows
-//                                        columns:numColumns
-//                                 reframePerTile:NO];
-//    [self.dungeonView setupForTests];
-//}
 
 - (IBAction)roomsButtonPressed:(id)sender {
     NSLog(@"[VC] rooms");
