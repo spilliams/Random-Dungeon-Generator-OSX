@@ -267,6 +267,41 @@
     [self setNeedsDisplay:YES];
 }
 
+- (void)setupForRooms
+{
+    [self makeRoomStartPoint:NSMakePoint(4, 5) endPoint:NSMakePoint(10, 10)];
+    [self makeRoomStartPoint:NSMakePoint(21, 13) endPoint:NSMakePoint(16, 19)];
+    [self makeRoomStartPoint:NSMakePoint(30, 22) endPoint:NSMakePoint(20, 25)];
+    [self makeRoomStartPoint:NSMakePoint(10, 17) endPoint:NSMakePoint(4, 25)];
+    [self makeRoomStartPoint:NSMakePoint(24, 1) endPoint:NSMakePoint(16, 6)];
+    
+    [self makeRoomStartPoint:NSMakePoint(27, 17) endPoint:NSMakePoint(33, 11)];
+    [self makeRoomStartPoint:NSMakePoint(40, 23) endPoint:NSMakePoint(44, 14)];
+    [self makeRoomStartPoint:NSMakePoint(51, 9) endPoint:NSMakePoint(38, 2)];
+}
+- (void)makeRoomStartPoint:(NSPoint)startPt endPoint:(NSPoint)endPt
+{
+    NSPoint origin = NSMakePoint(MIN(startPt.x, endPt.x),
+                                 MIN(startPt.y, endPt.y));
+    NSSize size = NSMakeSize(MAX(startPt.x, endPt.x) - origin.x,
+                             MAX(startPt.y, endPt.y) - origin.y);
+    origin.x = MAX(1, origin.x);
+    origin.y = MAX(1, origin.y);
+    size.width = MIN(size.width, self.width - origin.x - 2);
+    size.height = MIN(size.height, self.height - origin.y - 2);
+    [self makeRoomRect:NSMakeRect(origin.x, origin.y, size.width, size.height)];
+}
+- (void)makeRoomRect:(NSRect)rect
+{
+    for (int r=rect.origin.y; r<rect.origin.y+rect.size.height; r++) {
+        for (int c=rect.origin.x; c<rect.origin.x+rect.size.width; c++) {
+            ((Tile *)self.rows[r][c]).tileType = TileTypeOpen;
+        }
+    }
+    [self display];
+    [NSThread sleepForTimeInterval:0.5];
+}
+
 - (void)generateRooms
 {
     // TODO: debug this. infinite loop right now?

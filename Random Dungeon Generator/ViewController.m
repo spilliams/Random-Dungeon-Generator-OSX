@@ -76,7 +76,8 @@
 
 - (IBAction)roomsButtonPressed:(id)sender {
     NSLog(@"[VC] rooms");
-    [self.dungeonView generateRooms];
+//    [self.dungeonView generateRooms];
+    [self.dungeonView setupForRooms];
 }
 
 - (IBAction)mazeButtonPressed:(id)sender {
