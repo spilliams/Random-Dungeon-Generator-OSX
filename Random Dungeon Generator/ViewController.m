@@ -13,12 +13,20 @@
 }
 @property (weak) IBOutlet NSTextField *infoLabel;
 @property (nonatomic, strong) IBOutlet Dungeon *dungeonView;
+@property (weak) IBOutlet NSButton *redrawPerTileCheckBox;
+@property (weak) IBOutlet NSTextField *tileWidthNumberField;
+@property (weak) IBOutlet NSTextField *tileHeightNumberField;
+
 - (IBAction)resetButtonPushed:(id)sender;
-- (IBAction)testButtonPressed:(id)sender;
+//- (IBAction)testButtonPressed:(id)sender;
 - (IBAction)roomsButtonPressed:(id)sender;
 - (IBAction)mazeButtonPressed:(id)sender;
 - (IBAction)doorsButtonPressed:(id)sender;
 - (IBAction)pruneButtonPressed:(id)sender;
+
+- (IBAction)mazeAlgorithmChanged:(id)sender;
+- (IBAction)mazePickStyleChanged:(id)sender;
+- (IBAction)mazeTesellationChanged:(id)sender;
 @end
 
 @implementation ViewController
@@ -37,15 +45,15 @@
 - (void)reinitializeDungeon
 {
     // my current screen/storyboard allows for roughly 65 rows and 136 columns of 10x10 tiles
-    CGFloat width = 1360;
-    CGFloat height = 650;
-    NSSize tileSize = NSMakeSize(25, 25);
+    CGFloat width = self.dungeonView.frame.size.width;
+    CGFloat height = self.dungeonView.frame.size.height;
+    NSSize tileSize = NSMakeSize([self.tileWidthNumberField intValue], [self.tileHeightNumberField intValue]);
     NSInteger numRows = floor(height / (1.0* tileSize.height));
     NSInteger numColumns = floor(width / (1.0* tileSize.width));
     [self.dungeonView createWithTileSize:tileSize
-                                           rows:numRows
-                                        columns:numColumns
-                                 reframePerTile:NO];
+                                    rows:numRows
+                                 columns:numColumns
+                          reframePerTile:NO];
 }
 
 #pragma mark - Dungeon Delegate
@@ -62,29 +70,28 @@
     [self reinitializeDungeon];
 }
 
-- (IBAction)testButtonPressed:(id)sender {
-    NSLog(@"[VC] test");
-    CGFloat width = 1360;
-    CGFloat height = 650;
-    NSSize tileSize = NSMakeSize(10, 10);
-    NSInteger numRows = floor(height / (1.0* tileSize.height));
-    NSInteger numColumns = floor(width / (1.0* tileSize.width));
-    [self.dungeonView createWithTileSize:tileSize
-                                           rows:numRows
-                                        columns:numColumns
-                                 reframePerTile:NO];
-    [self.dungeonView setupForTests];
-}
+//- (IBAction)testButtonPressed:(id)sender {
+//    NSLog(@"[VC] test");
+//    CGFloat width = 1360;
+//    CGFloat height = 650;
+//    NSSize tileSize = NSMakeSize(10, 10);
+//    NSInteger numRows = floor(height / (1.0* tileSize.height));
+//    NSInteger numColumns = floor(width / (1.0* tileSize.width));
+//    [self.dungeonView createWithTileSize:tileSize
+//                                           rows:numRows
+//                                        columns:numColumns
+//                                 reframePerTile:NO];
+//    [self.dungeonView setupForTests];
+//}
 
 - (IBAction)roomsButtonPressed:(id)sender {
     NSLog(@"[VC] rooms");
-//    [self.dungeonView generateRooms];
-    [self.dungeonView setupForRooms];
+    [self.dungeonView generateRoomsRedrawPerRoom:(self.redrawPerTileCheckBox.state == NSOnState)];
 }
 
 - (IBAction)mazeButtonPressed:(id)sender {
     NSLog(@"[VC] maze");
-    [self.dungeonView generateMaze];
+    [self.dungeonView generateMazeRedrawPerTile:(self.redrawPerTileCheckBox.state == NSOnState)];
 }
 
 - (IBAction)doorsButtonPressed:(id)sender {
@@ -92,6 +99,21 @@
 }
 
 - (IBAction)pruneButtonPressed:(id)sender {
-    [self.dungeonView pruneDeadEnds];
+    [self.dungeonView pruneDeadEndsRedrawPerTile:(self.redrawPerTileCheckBox.state == NSOnState)];
+}
+
+- (IBAction)mazeAlgorithmChanged:(id)sender {
+    // does not invalidate UI
+    [self.dungeonView setAlgorithm:((NSPopUpButton *)sender).selectedTag];
+}
+
+- (IBAction)mazePickStyleChanged:(id)sender {
+    // does not invalidate UI
+    [self.dungeonView setPickType:((NSPopUpButton *)sender).selectedTag];
+}
+
+- (IBAction)mazeTesellationChanged:(id)sender {
+    // TODO: DOES invalidate UI
+    [self.dungeonView setTesellation:((NSPopUpButton *)sender).selectedTag];
 }
 @end

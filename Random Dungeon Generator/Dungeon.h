@@ -44,17 +44,27 @@ typedef NS_ENUM(NSInteger, MazeTesellation) {
 // leaves out "Crack", where there's no discernable order (requires too many pixels),
 // and "Fractal", where the maze is a fractal! (too tedious...)
 
+typedef NS_ENUM(NSInteger, MazePickType) {
+    MazePickTypeRiver,
+    MazePickTypeNewest,
+    MazePickTypeRandom,
+    MazePickTypeRandomNew,
+    MazePickTypeRandomOld,
+    MazePickTypeOldest
+};
+
 @interface Dungeon : NSView
 @property (nonatomic, weak) IBOutlet id<DungeonDelegate> delegate;
 @property (nonatomic, assign) MazeGenerationAlgorithm algorithm;
 @property (nonatomic, assign) MazeTesellation tesellation;
+@property (nonatomic, assign) MazePickType pickType;
 - (void)createWithTileSize:(NSSize)newTileSize rows:(NSInteger)newRows columns:(NSInteger)newColumns reframePerTile:(BOOL)reframePerTile;
 - (void)updateTileAtRow:(NSInteger)row column:(NSInteger)column withTile:(Tile *)newTile redraw:(BOOL)redraw;
 
-- (void)setupForRooms;
-- (void)setupForTests;
-- (void)generateRooms;
-- (void)generateMaze;
+//- (void)setupForRooms;
+//- (void)setupForTests;
+- (void)generateRoomsRedrawPerRoom:(BOOL)redrawPerRoom;;
+- (void)generateMazeRedrawPerTile:(BOOL)redrawPerTile;
 - (void)generateDoors;
-- (void)pruneDeadEnds;
+- (void)pruneDeadEndsRedrawPerTile:(BOOL)redrawPerTile;
 @end

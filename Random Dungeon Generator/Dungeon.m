@@ -9,6 +9,7 @@
 #import "Dungeon.h"
 
 #define LOG_MAZE NO
+#define LOG_ROOMS YES
 #define kColorOpen
 #define kColorClosed
 
@@ -50,6 +51,7 @@
 - (void)commonInit {
     self.algorithm = MazeGenerationAlgorithmGrowingTree;
     self.tesellation = MazeTesellationOrthogonal;
+    self.pickType = MazePickTypeRiver;
 }
 
 - (void)awakeFromNib
@@ -81,12 +83,12 @@
             }
             
             if ([t isRoom]) {
-                if (colored) { NSLog(@"[DV] wall is room"); [[NSColor magentaColor] setFill];}
-                else [[NSColor blueColor] setFill];
+                if (colored) { NSLog(@"[D] wall is room"); [[NSColor magentaColor] setFill];}
+                else [[NSColor lightGrayColor] setFill];
                 colored = YES;
             }
             if ([t isCorridor]) {
-                if (colored) { NSLog(@"[DV] corridor is room or wall"); [[NSColor magentaColor] setFill];}
+                if (colored) { NSLog(@"[D] corridor is room or wall"); [[NSColor magentaColor] setFill];}
                 else [[NSColor lightGrayColor] setFill];
                 colored = YES;
             }
@@ -142,10 +144,10 @@
 
 - (void)updateTileAtRow:(NSInteger)row column:(NSInteger)column withTile:(Tile *)newTile redraw:(BOOL)redraw
 {
-    NSAssert(self.rows!=nil, @"[DV] Rows can't be nil");
-    NSAssert(self.rows.count>row,@"[DV] Row must exist");
+    NSAssert(self.rows!=nil, @"[D] Rows can't be nil");
+    NSAssert(self.rows.count>row,@"[D] Row must exist");
     NSMutableArray *thisRow = ((NSMutableArray *)self.rows[row]);
-    NSAssert(thisRow.count>column, @"[DV] Row must be long enough");
+    NSAssert(thisRow.count>column, @"[D] Row must be long enough");
     
     newTile.x = column;
     newTile.y = row;
@@ -289,16 +291,14 @@
     [self setNeedsDisplay:YES];
 }
 
-- (void)generateRooms
+- (void)generateRoomsRedrawPerRoom:(BOOL)redrawPerRoom;
 {
-    // FIXME: debug this. infinite loop right now?
     // I probably made this more complicated than it needed to be...
     
     // givens
-    BOOL redrawPerRoom = YES;
-    float roomDensity = 0.4; // the percentage of total floor space that should be room in the end
+    float roomDensity = 0.25; // the percentage of total floor space that should be room in the end
     int ballparkNRooms = 10; // determines the average size of the rooms (this number is just a ballpark of the final number of rooms!)
-    float targetAspectRatio = 16/9.0; // ie the most oblong room's ratio of width:height. 1 means all square rooms, 0 and infinity are bad. Negative numbers are untested...
+    float targetAspectRatio = 10; // ie the most oblong room's ratio of width:height. 1 means all square rooms, 0 and infinity are bad. Negative numbers are untested...
     int roomPlacementTriesMax = 15;
     
     // derived
@@ -308,11 +308,12 @@
     float maxAspectRatio = MAX(targetAspectRatio, 1.0/targetAspectRatio);
     
     int countRoomSquares = 0;
-    
-    NSMutableArray *rooms = [NSMutableArray new];
+    if (LOG_ROOMS) NSLog(@"[D] generating ~%i rooms totalling %i, aspect ratios %.2f - %.2f", ballparkNRooms, totalRoomSquares, minAspectRatio, maxAspectRatio);
+    self.rooms = [NSMutableArray new];
     
     while (countRoomSquares < totalRoomSquares) {
         
+        if (LOG_ROOMS) NSLog(@"[D] make room. current area %i/%i",countRoomSquares, totalRoomSquares);
         if (seed == 0) seed = (unsigned int)[NSNumber numberWithDouble:[NSDate timeIntervalSinceReferenceDate]];
         seed = rand_r(&seed);
         float precision = 100.0;
@@ -326,6 +327,11 @@
         int roomH = (int)round(sqrt(squaresPerRoom / roomAspectRatio));
         int roomW = (int)ceil(squaresPerRoom / roomH);
         
+        if (LOG_ROOMS) {
+            NSLog(@"  aspect ratio %.2f", roomAspectRatio);
+            NSLog(@"  %i wide, %i high", roomW, roomH);
+        }
+        
         NSRect room = NSZeroRect;
         room.size = NSMakeSize(roomW, roomH);
         
@@ -333,7 +339,7 @@
         BOOL roomPlaced = NO;
         int roomPlacementTries = 0;
         while (!roomPlaced && roomPlacementTries < roomPlacementTriesMax) {
-            
+            if (LOG_ROOMS) NSLog(@"  placement try %i/%i",roomPlacementTries, roomPlacementTriesMax);
             // pick an origin that allows the room to fit within the dungeon bounds
             int xMin = 1;
             int yMin = 1;
@@ -342,10 +348,11 @@
             seed = rand_r(&seed);
             room.origin.x = (seed%(xMax-xMin)) + xMin;
             room.origin.y = (seed%(yMax-yMin)) + yMin;
+            if (LOG_ROOMS) NSLog(@"    origin %.2f,%.2f", room.origin.x, room.origin.y);
             
             // does room collide with any of the other rooms? Keep in mind we need to leave wall space between them
             BOOL collision = NO;
-            for (NSValue *v in rooms) {
+            for (NSValue *v in self.rooms) {
                 NSRect collider = [v rectValue];
                 int buffer = 2;
                 collider = NSMakeRect(collider.origin.x-buffer,
@@ -354,37 +361,40 @@
                                       collider.size.height+buffer*2);
                 if (CGRectIntersectsRect(room, collider)) {
                     collision = YES;
+                    if (LOG_ROOMS) NSLog(@"    collision!");
                     continue;
                 }
             }
             
             if (!collision) {
+                if (LOG_ROOMS) NSLog(@"    no collisions, carve room");
                 // it's a go! carve out the room
                 for (int r=room.origin.y; r<room.origin.y+room.size.height; r++) {
                     for (int c=room.origin.x; c<room.origin.x+room.size.width; c++) {
                         ((Tile *)self.rows[r][c]).tileType = TileTypeOpen;
                     }
                 }
-                if (redrawPerRoom) [self displayRect:NSMakeRect(room.origin.x-1, room.origin.y-1, room.size.width+2, room.size.height+2)];
-                [rooms addObject:[NSValue valueWithRect:room]];
+                [self.rooms addObject:[NSValue valueWithRect:room]];
                 roomPlaced = YES;
-            }
+            } // if !collision
             
             roomPlacementTries++;
-        }
+        } // room placement tries
         if (roomPlaced) {
             countRoomSquares += roomH * roomW;
         }
-    }
+        if (redrawPerRoom) [self display];
+    } // while square footage
+    [self setNeedsDisplay:YES];
 }
 
-- (void)generateMaze
+- (void)generateMazeRedrawPerTile:(BOOL)redrawPerTile
 {
     NSDate *start = [NSDate date];
     
     switch (self.algorithm) {
         case MazeGenerationAlgorithmGrowingTree:
-            [self generateGrowingTreeMaze];
+            [self generateGrowingTreeMazeRedrawPerTile:redrawPerTile];
             break;
     }
     
@@ -453,11 +463,8 @@
             || ([tile.west isRoom] && [tile.east isCorridor]));
 }
 
-- (void)pruneDeadEnds
+- (void)pruneDeadEndsRedrawPerTile:(BOOL)redrawPerTile
 {
-    // givens
-    BOOL redrawPerTile = YES;
-    
     // 1: round up all of the current dead ends
     NSMutableArray *deadEnds = [NSMutableArray new];
     for (int r=0; r<self.height; r++) {
@@ -517,21 +524,11 @@
     [self setNeedsDisplay:YES];
 }
 
-- (void)generateGrowingTreeMaze
+- (void)generateGrowingTreeMazeRedrawPerTile:(BOOL)redrawPerTile
 {
     // givens:
-    BOOL redrawPerTile = NO;
     BOOL avoidEdges = YES;
     float newOldThreshold = 0.25; // percentage of the unsolved cells that are "new" or "old"
-    typedef NS_ENUM(NSInteger, MazePickType) {
-        MazePickTypeNewest,
-        MazePickTypeRandom,
-        MazePickTypeRandomNew,
-        MazePickTypeRandomOld,
-        MazePickTypeOldest,
-        MazePickTypeRiver
-    };
-    MazePickType pickType = MazePickTypeRiver;
     float riverThreshold = 0.05; // only used in MazePickTypeRiver
     
     // pick origin
@@ -544,7 +541,7 @@
             Tile *t = ((Tile *)self.rows[r][c]);
             if (t.tileType == TileTypeOpen
                 && [t numAdjacentOfType:TileTypeOpen] == 0) {
-                NSLog(@"[DV] using pre-selected maze origin %i,%i", (int)t.x, (int)t.y);
+                NSLog(@"[D] using pre-selected maze origin %i,%i", (int)t.x, (int)t.y);
                 mazeOrigin = t;
                 continue;
             }
@@ -568,14 +565,14 @@
             Tile *candidate = randomRow[columnIndex];
             if (candidate.tileType == TileTypeClosed
                 && [candidate numAdjacentOfType:TileTypeOpen == 0]) {
-                NSLog(@"[DV] picked random maze origin %i,%i", (int)candidate.x, (int)candidate.y);
+                NSLog(@"[D] picked random maze origin %i,%i", (int)candidate.x, (int)candidate.y);
                 mazeOrigin = candidate;
             }
             
             guesses++;
         }
         if (mazeOrigin == nil) {
-            NSLog(@"[DV] couldn't find a valid origin. aborting");
+            NSLog(@"[D] couldn't find a valid origin. aborting");
             return;
         }
     }
@@ -593,12 +590,12 @@
         // pick a tile from unsolved
         int tileIndex = 0;
         if (unsolved.count * newOldThreshold == 0
-            && (pickType == MazePickTypeRandomNew
-                || pickType == MazePickTypeRandomOld)) {
-            pickType = MazePickTypeRandom;
+            && (self.pickType == MazePickTypeRandomNew
+                || self.pickType == MazePickTypeRandomOld)) {
+            self.pickType = MazePickTypeRandom;
         }
-        MazePickType tempPickType = pickType;
-        if (pickType == MazePickTypeRiver) {
+        MazePickType tempPickType = self.pickType;
+        if (self.pickType == MazePickTypeRiver) {
             if ((seed%100)/100.0 < riverThreshold) {
                 tempPickType = MazePickTypeRandom;
             } else {
@@ -634,7 +631,7 @@
         NSAssert(tileIndex >= 0, @"Tile index too small!");
         NSAssert(tileIndex < unsolved.count, @"Tile index too large!");
         Tile *t = unsolved[tileIndex];
-        if (LOG_MAZE) NSLog(@"[DV] picked unsolved %i,%i", (int)t.x, (int)t.y);
+        if (LOG_MAZE) NSLog(@"[D] picked unsolved %i,%i", (int)t.x, (int)t.y);
         
         // carve an unmade cell next to it
         // assume t is open, and will return YES to `-isCorridor`.
