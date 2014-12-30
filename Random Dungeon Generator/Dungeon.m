@@ -382,11 +382,13 @@
                 break;
             case MazePickTypeRandomNew:
                 seed = rand_r(&seed);
-                tileIndex = (int)(seed%(int)(unsolved.count*newOldThreshold));
+                if ((int)(unsolved.count*newOldThreshold) == 0) tileIndex = 0;
+                else tileIndex = (int)(seed%(int)(unsolved.count*newOldThreshold));
                 break;
             case MazePickTypeRandomOld:
                 seed = rand_r(&seed);
-                tileIndex = (int)unsolved.count - (int)(seed%(int)(unsolved.count*newOldThreshold));
+                if ((int)(unsolved.count*newOldThreshold) == 0) tileIndex = (int)unsolved.count-1;
+                else tileIndex = (int)unsolved.count - 1 - (int)(seed%(int)(unsolved.count*newOldThreshold));
                 break;
         }
         NSAssert(tileIndex >= 0, @"Tile index too small!");
