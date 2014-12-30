@@ -21,6 +21,11 @@ typedef NS_ENUM(NSInteger, TileType) {
 @property (nonatomic, weak) Tile *east;
 @property (nonatomic, weak) Tile *west;
 
+@property (nonatomic, assign) NSInteger x;
+@property (nonatomic, assign) NSInteger y;
+
+@property (nonatomic, assign) BOOL mazeUnsolved;
+
 /// @return Whether this tile is a dead end
 - (BOOL)isDeadEnd;
 /// @return Whether this tile is a corridor
@@ -38,4 +43,10 @@ typedef NS_ENUM(NSInteger, TileType) {
 - (BOOL)isDoorway;
 
 - (BOOL)isValidForMaze;
+
+- (NSInteger)numOrthogonalOfType:(TileType)type;
+- (NSInteger)numOrthogonalPassTest:(BOOL(^)(Tile *t))test;
+- (NSInteger)numDiagonalOfType:(TileType)type;
+- (NSInteger)numDiagonalPassTest:(BOOL(^)(Tile *t))test;
+- (NSInteger)numOfTiles:(NSArray *)tiles passTest:(BOOL(^)(Tile *t))test;
 @end

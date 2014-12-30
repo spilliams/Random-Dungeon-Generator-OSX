@@ -720,10 +720,20 @@
                                     <action selector="mazeButtonPressed:" target="XfG-lQ-9wD" id="qsb-BX-JwH"/>
                                 </connections>
                             </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="kUe-3m-kN4">
+                                <rect key="frame" x="424" y="22" width="38" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="Qoi-Ea-rt0">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="dungeonView" destination="Z7t-9w-Tgi" id="dqZ-Zf-IOZ"/>
+                        <outlet property="infoLabel" destination="kUe-3m-kN4" id="iYw-D1-4eR"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

@@ -102,12 +102,6 @@
     TileType oldTileType = self.tileType;
     self.tileType = TileTypeOpen;
     BOOL isValidForMaze = (![self isRoom]);
-//                           [self numOrthogonalPassTest:^BOOL(Tile *t) {
-//                               return [t isRoom];
-//                           }]==0
-//                           && [self numDiagonalPassTest:^BOOL(Tile *t) {
-//                               return [t isRoom];
-//                           }]==0);
     self.tileType = oldTileType;
     return isValidForMaze;
 }
