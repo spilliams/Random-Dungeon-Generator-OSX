@@ -675,9 +675,6 @@
                             <customView id="Z7t-9w-Tgi" customClass="Dungeon">
                                 <rect key="frame" x="0.0" y="74" width="1360" height="576"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                <connections>
-                                    <outlet property="delegate" destination="XfG-lQ-9wD" id="C2S-Ve-fbW"/>
-                                </connections>
                             </customView>
                             <button verticalHuggingPriority="750" id="eLQ-9i-4Rm">
                                 <rect key="frame" x="95" y="13" width="74" height="55"/>

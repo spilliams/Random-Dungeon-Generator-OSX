@@ -99,6 +99,7 @@
 
 - (IBAction)detailModeToggled:(id)sender {
     [self.dungeonView setDetailedDraw:(((NSButton *)sender).state == NSOnState)];
+    [self.dungeonView setNeedsDisplay:YES];
 }
 
 - (IBAction)roomDensitySliderChanged:(id)sender {
