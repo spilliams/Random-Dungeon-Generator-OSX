@@ -159,7 +159,9 @@
     if (LOG_ROOMS) NSLog(@"[D] generating ~%i rooms totalling %i, aspect ratios %.2f - %.2f", self.roomBallparkCount, totalRoomSquares, minAspectRatio, maxAspectRatio);
     self.rooms = [NSMutableArray new];
     
-    while (countRoomSquares < totalRoomSquares) {
+    int roomCreationTriesCount = 0;
+    
+    while (countRoomSquares < totalRoomSquares && roomCreationTriesCount < roomCreationTriesMax) {
         
         if (LOG_ROOMS) NSLog(@"[D] make room. current area %i/%i",countRoomSquares, totalRoomSquares);
         if (seed == 0) seed = (unsigned int)[NSNumber numberWithDouble:[NSDate timeIntervalSinceReferenceDate]];
