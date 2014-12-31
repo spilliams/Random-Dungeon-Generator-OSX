@@ -22,6 +22,7 @@
 - (IBAction)mazeButtonPressed:(id)sender;
 - (IBAction)doorsButtonPressed:(id)sender;
 - (IBAction)pruneButtonPressed:(id)sender;
+- (IBAction)detailModeToggled:(id)sender;
 
 - (IBAction)mazeAlgorithmChanged:(id)sender;
 - (IBAction)mazePickStyleChanged:(id)sender;
@@ -80,6 +81,10 @@
 
 - (IBAction)pruneButtonPressed:(id)sender {
     [self.dungeonView pruneDeadEndsRedrawPerTile:(self.redrawPerTileCheckBox.state == NSOnState)];
+}
+
+- (IBAction)detailModeToggled:(id)sender {
+    [self.dungeonView setDetailedDraw:(((NSButton *)sender).state == NSOnState)];
 }
 
 - (IBAction)mazeAlgorithmChanged:(id)sender {

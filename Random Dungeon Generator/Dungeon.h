@@ -58,6 +58,7 @@ typedef NS_ENUM(NSInteger, MazePickType) {
 @property (nonatomic, assign) MazeGenerationAlgorithm algorithm;
 @property (nonatomic, assign) MazeTesellation tesellation;
 @property (nonatomic, assign) MazePickType pickType;
+@property (nonatomic, assign) BOOL detailedDraw;
 - (void)createWithTileSize:(NSSize)newTileSize rows:(NSInteger)newRows columns:(NSInteger)newColumns reframePerTile:(BOOL)reframePerTile;
 - (void)updateTileAtRow:(NSInteger)row column:(NSInteger)column withTile:(Tile *)newTile redraw:(BOOL)redraw;
 

@@ -84,6 +84,7 @@
             
             if ([t isRoom]) {
                 if (colored) { NSLog(@"[D] wall is room"); [[NSColor magentaColor] setFill];}
+                else if (self.detailedDraw) [[NSColor blueColor] setFill];
                 else [[NSColor lightGrayColor] setFill];
                 colored = YES;
             }
@@ -99,19 +100,13 @@
             NSRect tileRect = [self rectForTileAtRow:r column:c];
             [NSBezierPath fillRect:tileRect];
             
-//            if ([t isCorridorJunction]) {
-//                [[NSColor whiteColor] setFill];
-//            }
-            if ([t isDeadEnd]) {
-                [[[NSColor purpleColor] colorWithAlphaComponent:0.5] setFill];
-                [NSBezierPath fillRect:tileRect];
-            }
-//            if ([t isDoorway]) {
-//                [[NSColor brownColor] setFill];
-//            }
-            
-            if (t.mazeUnsolved) {
-                [[NSColor cyanColor] setFill];
+            if (self.detailedDraw) {
+                if ([t isDeadEnd]) {
+                    [[[NSColor purpleColor] colorWithAlphaComponent:0.5] setFill];
+                }
+                if (t.mazeUnsolved) {
+                    [[NSColor cyanColor] setFill];
+                }
                 [NSBezierPath fillRect:tileRect];
             }
         }
