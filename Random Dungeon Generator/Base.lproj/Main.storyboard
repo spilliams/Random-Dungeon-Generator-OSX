@@ -688,6 +688,7 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="resetButtonPushed:" target="XfG-lQ-9wD" id="zzE-0x-SnP"/>
+                                    <outlet property="nextKeyView" destination="LTA-Sc-IAE" id="2PS-f3-Y98"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" id="LTA-Sc-IAE">
@@ -699,6 +700,7 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="roomsButtonPressed:" target="XfG-lQ-9wD" id="bkV-7V-P7C"/>
+                                    <outlet property="nextKeyView" destination="SOp-aW-9al" id="bjj-jo-e9A"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" id="SOp-aW-9al">
@@ -710,6 +712,7 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="mazeButtonPressed:" target="XfG-lQ-9wD" id="qsb-BX-JwH"/>
+                                    <outlet property="nextKeyView" destination="1So-Ln-t0R" id="E8y-fz-b5o"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" id="1So-Ln-t0R">
@@ -721,6 +724,7 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="doorsButtonPressed:" target="XfG-lQ-9wD" id="6GG-iD-lan"/>
+                                    <outlet property="nextKeyView" destination="23R-4R-wqW" id="Fim-JB-Cwu"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" id="23R-4R-wqW">
@@ -732,6 +736,7 @@
                                 </buttonCell>
                                 <connections>
                                     <action selector="pruneButtonPressed:" target="XfG-lQ-9wD" id="8kg-GI-Z7y"/>
+                                    <outlet property="nextKeyView" destination="D6q-zC-gR7" id="jHr-VR-KFf"/>
                                 </connections>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="3cT-NL-ibl">
@@ -759,6 +764,7 @@
                                 </popUpButtonCell>
                                 <connections>
                                     <action selector="mazeAlgorithmChanged:" target="XfG-lQ-9wD" id="YuW-0E-ko1"/>
+                                    <outlet property="nextKeyView" destination="f32-Gi-xW6" id="d9N-qr-uar"/>
                                 </connections>
                             </popUpButton>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="jFb-uv-35N">
@@ -801,6 +807,7 @@
                                 </popUpButtonCell>
                                 <connections>
                                     <action selector="mazePickStyleChanged:" target="XfG-lQ-9wD" id="Brc-KH-4P6"/>
+                                    <outlet property="nextKeyView" destination="T2W-cR-u5b" id="0ww-tA-jPQ"/>
                                 </connections>
                             </popUpButton>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="3Dn-yj-vqT">
@@ -828,16 +835,9 @@
                                 </popUpButtonCell>
                                 <connections>
                                     <action selector="mazeTesellationChanged:" target="XfG-lQ-9wD" id="S3o-Ek-jC9"/>
+                                    <outlet property="nextKeyView" destination="nw9-zO-pLz" id="NHs-h2-UdG"/>
                                 </connections>
                             </popUpButton>
-                            <button id="A1W-67-Liw">
-                                <rect key="frame" x="730" y="44" width="120" height="18"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
-                                <buttonCell key="cell" type="check" title="Redraw Per Tile" bezelStyle="regularSquare" imagePosition="left" inset="2" id="M8q-cO-VdG">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                            </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="cx5-Tk-R2u">
                                 <rect key="frame" x="74" y="45" width="17" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -865,6 +865,9 @@
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <outlet property="nextKeyView" destination="b7n-LY-PfO" id="xbf-k8-rN3"/>
+                                </connections>
                             </textField>
                             <textField verticalHuggingPriority="750" id="b7n-LY-PfO">
                                 <rect key="frame" x="20" y="16" width="48" height="22"/>
@@ -875,10 +878,13 @@
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <outlet property="nextKeyView" destination="eLQ-9i-4Rm" id="FYO-yp-yF1"/>
+                                </connections>
                             </textField>
                             <button id="yzV-aJ-gGB">
-                                <rect key="frame" x="730" y="19" width="135" height="18"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <rect key="frame" x="1207" y="21" width="135" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <buttonCell key="cell" type="check" title="Toggle Detail View" bezelStyle="regularSquare" imagePosition="left" inset="2" id="h3s-io-r4y">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -888,23 +894,34 @@
                                 </connections>
                             </button>
                             <slider verticalHuggingPriority="750" id="nw9-zO-pLz">
-                                <rect key="frame" x="869" y="42" width="96" height="21"/>
+                                <rect key="frame" x="729" y="43" width="96" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="25" tickMarkPosition="above" sliderType="linear" id="zJB-Vx-DPy"/>
                                 <connections>
                                     <action selector="roomDensitySliderChanged:" target="XfG-lQ-9wD" id="EzJ-da-R8m"/>
+                                    <outlet property="nextKeyView" destination="fYl-Ta-VqH" id="seK-jw-ArS"/>
                                 </connections>
                             </slider>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="cpq-bU-evX">
+                                <rect key="frame" x="866" y="21" width="114" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Max Aspect Ratio" id="1Eq-Hz-ljg">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <slider verticalHuggingPriority="750" id="fYl-Ta-VqH">
-                                <rect key="frame" x="869" y="16" width="96" height="21"/>
+                                <rect key="frame" x="729" y="17" width="96" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <sliderCell key="cell" state="on" alignment="left" minValue="1" maxValue="10" doubleValue="1.778" tickMarkPosition="above" sliderType="linear" id="jY0-At-r4y"/>
                                 <connections>
                                     <action selector="roomMaxAspectRatioSliderChanged:" target="XfG-lQ-9wD" id="mTx-uG-0Wm"/>
+                                    <outlet property="nextKeyView" destination="oa4-yb-enD" id="XCO-Cl-aNo"/>
                                 </connections>
                             </slider>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="SDp-hx-R29">
-                                <rect key="frame" x="969" y="44" width="33" height="17"/>
+                                <rect key="frame" x="829" y="45" width="33" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="25%" id="7pG-2a-kRm">
                                     <font key="font" metaFont="system"/>
@@ -913,7 +930,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="4P6-AL-JV9">
-                                <rect key="frame" x="1006" y="44" width="91" height="17"/>
+                                <rect key="frame" x="866" y="45" width="91" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Room Density" id="SpM-Rn-SfR">
                                     <font key="font" metaFont="system"/>
@@ -922,7 +939,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="cyH-Sw-L0G">
-                                <rect key="frame" x="969" y="20" width="33" height="17"/>
+                                <rect key="frame" x="829" y="21" width="33" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="1.78" id="rXE-7i-hPh">
                                     <font key="font" metaFont="system"/>
@@ -931,16 +948,19 @@
                                 </textFieldCell>
                             </textField>
                             <slider verticalHuggingPriority="750" id="oa4-yb-enD">
-                                <rect key="frame" x="1124" y="42" width="96" height="21"/>
+                                <rect key="frame" x="984" y="18" width="96" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="10" tickMarkPosition="above" sliderType="linear" id="tbo-Uk-Q0R">
                                     <connections>
                                         <action selector="roomBallparkCountSliderChanged:" target="XfG-lQ-9wD" id="gcq-rO-3gC"/>
                                     </connections>
                                 </sliderCell>
+                                <connections>
+                                    <outlet property="nextKeyView" destination="A1W-67-Liw" id="1VF-cb-UUM"/>
+                                </connections>
                             </slider>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Ofo-jM-cRM">
-                                <rect key="frame" x="1224" y="45" width="20" height="17"/>
+                                <rect key="frame" x="1084" y="21" width="20" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="10" id="lhp-mM-NVf">
                                     <font key="font" metaFont="system"/>
@@ -949,7 +969,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="a2u-Pp-r8i">
-                                <rect key="frame" x="1248" y="45" width="137" height="17"/>
+                                <rect key="frame" x="984" y="45" width="137" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Ballpark Room Count" id="Xu7-q0-tEJ">
                                     <font key="font" metaFont="system"/>
@@ -957,15 +977,17 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="cpq-bU-evX">
-                                <rect key="frame" x="1006" y="20" width="114" height="17"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Max Aspect Ratio" id="1Eq-Hz-ljg">
+                            <button id="A1W-67-Liw">
+                                <rect key="frame" x="1222" y="44" width="120" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                <buttonCell key="cell" type="check" title="Redraw Per Tile" bezelStyle="regularSquare" imagePosition="left" inset="2" id="M8q-cO-VdG">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                                </buttonCell>
+                                <connections>
+                                    <outlet property="nextKeyView" destination="yzV-aJ-gGB" id="Vmt-eo-9en"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>

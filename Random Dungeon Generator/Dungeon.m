@@ -54,6 +54,7 @@
     self.pickType = MazePickTypeRiver;
     self.roomDensity = 0.25;
     self.roomMaxAspectRatio = 16/9.0;
+    self.roomBallparkCount = 10;
 }
 
 - (void)awakeFromNib
@@ -145,7 +146,7 @@
 {
     // I probably made this more complicated than it needed to be...
     
-    // givens
+    int roomCreationTriesMax = self.roomBallparkCount * 100;
     int roomPlacementTriesMax = 15;
     
     // derived
@@ -226,6 +227,8 @@
             countRoomSquares += roomH * roomW;
         }
         if (redrawPerRoom) [self display];
+        
+        roomCreationTriesCount++;
     } // while square footage
     [self setNeedsDisplay:YES];
 }
