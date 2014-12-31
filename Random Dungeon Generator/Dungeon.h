@@ -9,12 +9,6 @@
 #import <Cocoa/Cocoa.h>
 #import "Tile.h"
 
-@protocol DungeonDelegate <NSObject>
-@optional
-- (void)mazeFinishedInTime:(NSTimeInterval)time;
-
-@end
-
 // For explanation of what all this means, check out
 // see http://www.astrolog.org/labyrnth/algrithm.htm
 
@@ -54,13 +48,16 @@ typedef NS_ENUM(NSInteger, MazePickType) {
 };
 
 @interface Dungeon : NSView
-@property (nonatomic, weak) IBOutlet id<DungeonDelegate> delegate;
+
 @property (nonatomic, assign) MazeGenerationAlgorithm algorithm;
 @property (nonatomic, assign) MazeTesellation tesellation;
 @property (nonatomic, assign) MazePickType pickType;
 @property (nonatomic, assign) BOOL detailedDraw;
+@property (nonatomic, assign) float roomDensity;
+@property (nonatomic, assign) float roomMaxAspectRatio;
+@property (nonatomic, assign) int roomBallparkCount;
+
 - (void)createWithTileSize:(NSSize)newTileSize rows:(NSInteger)newRows columns:(NSInteger)newColumns reframePerTile:(BOOL)reframePerTile;
-- (void)updateTileAtRow:(NSInteger)row column:(NSInteger)column withTile:(Tile *)newTile redraw:(BOOL)redraw;
 
 - (void)generateRoomsRedrawPerRoom:(BOOL)redrawPerRoom;;
 - (void)generateMazeRedrawPerTile:(BOOL)redrawPerTile;

@@ -830,15 +830,6 @@
                                     <action selector="mazeTesellationChanged:" target="XfG-lQ-9wD" id="S3o-Ek-jC9"/>
                                 </connections>
                             </popUpButton>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="kUe-3m-kN4">
-                                <rect key="frame" x="874" y="20" width="468" height="17"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" id="Qoi-Ea-rt0">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <button id="A1W-67-Liw">
                                 <rect key="frame" x="730" y="44" width="120" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
@@ -896,12 +887,96 @@
                                     <action selector="detailModeToggled:" target="XfG-lQ-9wD" id="zda-cg-iJs"/>
                                 </connections>
                             </button>
+                            <slider verticalHuggingPriority="750" id="nw9-zO-pLz">
+                                <rect key="frame" x="869" y="42" width="96" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="25" tickMarkPosition="above" sliderType="linear" id="zJB-Vx-DPy"/>
+                                <connections>
+                                    <action selector="roomDensitySliderChanged:" target="XfG-lQ-9wD" id="EzJ-da-R8m"/>
+                                </connections>
+                            </slider>
+                            <slider verticalHuggingPriority="750" id="fYl-Ta-VqH">
+                                <rect key="frame" x="869" y="16" width="96" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <sliderCell key="cell" state="on" alignment="left" minValue="1" maxValue="10" doubleValue="1.778" tickMarkPosition="above" sliderType="linear" id="jY0-At-r4y"/>
+                                <connections>
+                                    <action selector="roomMaxAspectRatioSliderChanged:" target="XfG-lQ-9wD" id="mTx-uG-0Wm"/>
+                                </connections>
+                            </slider>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="SDp-hx-R29">
+                                <rect key="frame" x="969" y="44" width="33" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="25%" id="7pG-2a-kRm">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="4P6-AL-JV9">
+                                <rect key="frame" x="1006" y="44" width="91" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Room Density" id="SpM-Rn-SfR">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="cyH-Sw-L0G">
+                                <rect key="frame" x="969" y="20" width="33" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="1.78" id="rXE-7i-hPh">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <slider verticalHuggingPriority="750" id="oa4-yb-enD">
+                                <rect key="frame" x="1124" y="42" width="96" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="10" tickMarkPosition="above" sliderType="linear" id="tbo-Uk-Q0R">
+                                    <connections>
+                                        <action selector="roomBallparkCountSliderChanged:" target="XfG-lQ-9wD" id="gcq-rO-3gC"/>
+                                    </connections>
+                                </sliderCell>
+                            </slider>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Ofo-jM-cRM">
+                                <rect key="frame" x="1224" y="45" width="20" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="10" id="lhp-mM-NVf">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="a2u-Pp-r8i">
+                                <rect key="frame" x="1248" y="45" width="137" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Ballpark Room Count" id="Xu7-q0-tEJ">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="cpq-bU-evX">
+                                <rect key="frame" x="1006" y="20" width="114" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Max Aspect Ratio" id="1Eq-Hz-ljg">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="dungeonView" destination="Z7t-9w-Tgi" id="dqZ-Zf-IOZ"/>
-                        <outlet property="infoLabel" destination="kUe-3m-kN4" id="iYw-D1-4eR"/>
                         <outlet property="redrawPerTileCheckBox" destination="A1W-67-Liw" id="yJU-dj-N4x"/>
+                        <outlet property="roomBallparkCountLabel" destination="Ofo-jM-cRM" id="2nI-21-r9z"/>
+                        <outlet property="roomBallparkCountSlider" destination="oa4-yb-enD" id="Pfl-mV-QXe"/>
+                        <outlet property="roomDensityLabel" destination="SDp-hx-R29" id="rkF-q1-YLh"/>
+                        <outlet property="roomDensitySlider" destination="nw9-zO-pLz" id="zh1-Zt-hby"/>
+                        <outlet property="roomMaxAspectRatioLabel" destination="cyH-Sw-L0G" id="2IH-21-i1q"/>
+                        <outlet property="roomMaxAspectRatioSlider" destination="fYl-Ta-VqH" id="Ilx-YE-k9G"/>
                         <outlet property="tileHeightNumberField" destination="b7n-LY-PfO" id="dy6-EZ-AOx"/>
                         <outlet property="tileWidthNumberField" destination="i4X-0q-1Jh" id="z9m-t9-shB"/>
                     </connections>

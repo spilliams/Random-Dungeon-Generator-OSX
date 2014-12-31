@@ -52,6 +52,8 @@
     self.algorithm = MazeGenerationAlgorithmGrowingTree;
     self.tesellation = MazeTesellationOrthogonal;
     self.pickType = MazePickTypeRiver;
+    self.roomDensity = 0.25;
+    self.roomMaxAspectRatio = 16/9.0;
 }
 
 - (void)awakeFromNib
@@ -113,6 +115,8 @@
     }
 }
 
+#pragma mark - Public API
+
 - (void)createWithTileSize:(NSSize)newTileSize rows:(NSInteger)newRows columns:(NSInteger)newColumns reframePerTile:(BOOL)reframePerTile
 {
     self.width = newColumns;
@@ -137,89 +141,21 @@
     [self setNeedsDisplay:YES];
 }
 
-- (void)updateTileAtRow:(NSInteger)row column:(NSInteger)column withTile:(Tile *)newTile redraw:(BOOL)redraw
-{
-    NSAssert(self.rows!=nil, @"[D] Rows can't be nil");
-    NSAssert(self.rows.count>row,@"[D] Row must exist");
-    NSMutableArray *thisRow = ((NSMutableArray *)self.rows[row]);
-    NSAssert(thisRow.count>column, @"[D] Row must be long enough");
-    
-    newTile.x = column;
-    newTile.y = row;
-    
-    // connect it to the north
-    if (row > 0) {
-        NSAssert(((NSMutableArray *)self.rows[row-1]) != nil, @"Row above must exist");
-        NSAssert(((NSMutableArray *)self.rows[row-1]).count > column, @"Row above must be long enough");
-        Tile *northTile = ((Tile *)((NSMutableArray *)self.rows[row-1])[column]);
-        [newTile setNorth:northTile];
-        [northTile setSouth:newTile];
-    }
-    // connect it to the south
-    if (row < self.rows.count-1) {
-        NSAssert(((NSMutableArray *)self.rows[row+1]) != nil, @"Row below must exist");
-        NSAssert(((NSMutableArray *)self.rows[row+1]).count > column, @"Row below must be long enough");
-        Tile *southTile = ((Tile *)((NSMutableArray *)self.rows[row+1])[column]);
-        [newTile setSouth:southTile];
-        [southTile setNorth:newTile];
-    }
-    // connect it to the west
-    if (column > 0) {
-        [newTile setWest:thisRow[column-1]];
-        [thisRow[column-1] setEast:newTile];
-    }
-    // connect it to the east
-    if (column < thisRow.count-1) {
-        [newTile setEast:thisRow[column+1]];
-        [thisRow[column+1] setWest:newTile];
-    }
-    
-    [thisRow replaceObjectAtIndex:column withObject:newTile];
-    
-    if (redraw) [self setNeedsDisplay:YES];
-}
-
-- (void)makeRoomStartPoint:(NSPoint)startPt endPoint:(NSPoint)endPt
-{
-    NSPoint origin = NSMakePoint(MIN(startPt.x, endPt.x),
-                                 MIN(startPt.y, endPt.y));
-    NSSize size = NSMakeSize(MAX(startPt.x, endPt.x) - origin.x,
-                             MAX(startPt.y, endPt.y) - origin.y);
-    origin.x = MAX(1, origin.x);
-    origin.y = MAX(1, origin.y);
-    size.width = MIN(size.width, self.width - origin.x - 2);
-    size.height = MIN(size.height, self.height - origin.y - 2);
-    [self makeRoomRect:NSMakeRect(origin.x, origin.y, size.width, size.height)];
-}
-- (void)makeRoomRect:(NSRect)rect
-{
-    for (int r=rect.origin.y; r<rect.origin.y+rect.size.height; r++) {
-        for (int c=rect.origin.x; c<rect.origin.x+rect.size.width; c++) {
-            ((Tile *)self.rows[r][c]).tileType = TileTypeOpen;
-        }
-    }
-    [self.rooms addObject:[NSValue valueWithRect:rect]];
-    [self setNeedsDisplay:YES];
-}
-
 - (void)generateRoomsRedrawPerRoom:(BOOL)redrawPerRoom;
 {
     // I probably made this more complicated than it needed to be...
     
     // givens
-    float roomDensity = 0.2; // the percentage of total floor space that should be room in the end
-    int ballparkNRooms = 10; // determines the average size of the rooms (this number is just a ballpark of the final number of rooms!)
-    float targetAspectRatio = 16/9.0; // ie the most oblong room's ratio of width:height. 1 means all square rooms, 0 and infinity are bad. Negative numbers are untested...
     int roomPlacementTriesMax = 15;
     
     // derived
-    int totalRoomSquares = self.width * self.height * roomDensity;
-    float squaresPerRoom = totalRoomSquares / ((float)ballparkNRooms);
-    float minAspectRatio = MIN(targetAspectRatio, 1.0/targetAspectRatio);
-    float maxAspectRatio = MAX(targetAspectRatio, 1.0/targetAspectRatio);
+    int totalRoomSquares = self.width * self.height * self.roomDensity;
+    float squaresPerRoom = totalRoomSquares / ((float)self.roomBallparkCount);
+    float minAspectRatio = MIN(self.roomMaxAspectRatio, 1.0/self.roomMaxAspectRatio);
+    float maxAspectRatio = MAX(self.roomMaxAspectRatio, 1.0/self.roomMaxAspectRatio);
     
     int countRoomSquares = 0;
-    if (LOG_ROOMS) NSLog(@"[D] generating ~%i rooms totalling %i, aspect ratios %.2f - %.2f", ballparkNRooms, totalRoomSquares, minAspectRatio, maxAspectRatio);
+    if (LOG_ROOMS) NSLog(@"[D] generating ~%i rooms totalling %i, aspect ratios %.2f - %.2f", self.roomBallparkCount, totalRoomSquares, minAspectRatio, maxAspectRatio);
     self.rooms = [NSMutableArray new];
     
     while (countRoomSquares < totalRoomSquares) {
@@ -279,12 +215,7 @@
             
             if (!collision) {
                 if (LOG_ROOMS) NSLog(@"    no collisions, carve room");
-                // it's a go! carve out the room
-                for (int r=room.origin.y; r<room.origin.y+room.size.height; r++) {
-                    for (int c=room.origin.x; c<room.origin.x+room.size.width; c++) {
-                        ((Tile *)self.rows[r][c]).tileType = TileTypeOpen;
-                    }
-                }
+                [self carveRoomRect:room];
                 [self.rooms addObject:[NSValue valueWithRect:room]];
                 roomPlaced = YES;
             } // if !collision
@@ -301,19 +232,10 @@
 
 - (void)generateMazeRedrawPerTile:(BOOL)redrawPerTile
 {
-    NSDate *start = [NSDate date];
-    
     switch (self.algorithm) {
         case MazeGenerationAlgorithmGrowingTree:
             [self generateGrowingTreeMazeRedrawPerTile:redrawPerTile];
             break;
-    }
-    
-    NSTimeInterval elapsed = [[NSDate date] timeIntervalSinceDate:start];
-    if (self.delegate
-        && [self.delegate conformsToProtocol:@protocol(DungeonDelegate)]
-        && [self.delegate respondsToSelector:@selector(mazeFinishedInTime:)]) {
-        [self.delegate mazeFinishedInTime:elapsed];
     }
 }
 
@@ -366,13 +288,6 @@
     }
     [self setNeedsDisplay:YES];
 }
-- (BOOL)tileIsBetweenDoorAndCorridor:(Tile *)tile
-{
-    return (([tile.north isRoom] && [tile.south isCorridor])
-            || ([tile.east isRoom] && [tile.west isCorridor])
-            || ([tile.south isRoom] && [tile.north isCorridor])
-            || ([tile.west isRoom] && [tile.east isCorridor]));
-}
 
 - (void)pruneDeadEndsRedrawPerTile:(BOOL)redrawPerTile
 {
@@ -408,12 +323,62 @@
 
 #pragma mark - Private Helpers
 
+- (void)updateTileAtRow:(NSInteger)row column:(NSInteger)column withTile:(Tile *)newTile redraw:(BOOL)redraw
+{
+    NSAssert(self.rows!=nil, @"[D] Rows can't be nil");
+    NSAssert(self.rows.count>row,@"[D] Row must exist");
+    NSMutableArray *thisRow = ((NSMutableArray *)self.rows[row]);
+    NSAssert(thisRow.count>column, @"[D] Row must be long enough");
+    
+    newTile.x = column;
+    newTile.y = row;
+    
+    // connect it to the north
+    if (row > 0) {
+        NSAssert(((NSMutableArray *)self.rows[row-1]) != nil, @"Row above must exist");
+        NSAssert(((NSMutableArray *)self.rows[row-1]).count > column, @"Row above must be long enough");
+        Tile *northTile = ((Tile *)((NSMutableArray *)self.rows[row-1])[column]);
+        [newTile setNorth:northTile];
+        [northTile setSouth:newTile];
+    }
+    // connect it to the south
+    if (row < self.rows.count-1) {
+        NSAssert(((NSMutableArray *)self.rows[row+1]) != nil, @"Row below must exist");
+        NSAssert(((NSMutableArray *)self.rows[row+1]).count > column, @"Row below must be long enough");
+        Tile *southTile = ((Tile *)((NSMutableArray *)self.rows[row+1])[column]);
+        [newTile setSouth:southTile];
+        [southTile setNorth:newTile];
+    }
+    // connect it to the west
+    if (column > 0) {
+        [newTile setWest:thisRow[column-1]];
+        [thisRow[column-1] setEast:newTile];
+    }
+    // connect it to the east
+    if (column < thisRow.count-1) {
+        [newTile setEast:thisRow[column+1]];
+        [thisRow[column+1] setWest:newTile];
+    }
+    
+    [thisRow replaceObjectAtIndex:column withObject:newTile];
+    
+    if (redraw) [self setNeedsDisplay:YES];
+}
+
 - (NSRect)rectForTileAtRow:(NSInteger)row column:(NSInteger)column
 {
     return NSMakeRect(column*self.tileSize.width,
                       row*self.tileSize.height,
                       self.tileSize.width,
                       self.tileSize.height);
+}
+
+- (BOOL)tileIsBetweenDoorAndCorridor:(Tile *)tile
+{
+    return (([tile.north isRoom] && [tile.south isCorridor])
+            || ([tile.east isRoom] && [tile.west isCorridor])
+            || ([tile.south isRoom] && [tile.north isCorridor])
+            || ([tile.west isRoom] && [tile.east isCorridor]));
 }
 
 - (void)handleClickGesture:(NSGestureRecognizer *)clickGR
@@ -633,6 +598,17 @@
     for (Tile *t in unsolved) {
         t.mazeUnsolved = YES;
     }
+    [self setNeedsDisplay:YES];
+}
+
+- (void)carveRoomRect:(NSRect)rect
+{
+    for (int r=rect.origin.y; r<rect.origin.y+rect.size.height; r++) {
+        for (int c=rect.origin.x; c<rect.origin.x+rect.size.width; c++) {
+            ((Tile *)self.rows[r][c]).tileType = TileTypeOpen;
+        }
+    }
+    [self.rooms addObject:[NSValue valueWithRect:rect]];
     [self setNeedsDisplay:YES];
 }
 

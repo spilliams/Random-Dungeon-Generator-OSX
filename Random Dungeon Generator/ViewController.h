@@ -7,9 +7,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "Dungeon.h"
 
-@interface ViewController : NSViewController <DungeonDelegate>
+@interface ViewController : NSViewController
 
 
 @end

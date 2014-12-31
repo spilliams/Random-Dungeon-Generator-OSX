@@ -7,26 +7,40 @@
 //
 
 #import "ViewController.h"
+#import "Dungeon.h"
 
 @interface ViewController () {
     BOOL toStep;
 }
-@property (weak) IBOutlet NSTextField *infoLabel;
 @property (nonatomic, strong) IBOutlet Dungeon *dungeonView;
 @property (weak) IBOutlet NSButton *redrawPerTileCheckBox;
+
 @property (weak) IBOutlet NSTextField *tileWidthNumberField;
 @property (weak) IBOutlet NSTextField *tileHeightNumberField;
+
+@property (weak) IBOutlet NSTextField *roomDensityLabel;
+@property (weak) IBOutlet NSSlider *roomDensitySlider;
+
+@property (weak) IBOutlet NSTextField *roomMaxAspectRatioLabel;
+@property (weak) IBOutlet NSSlider *roomMaxAspectRatioSlider;
+
+@property (weak) IBOutlet NSTextField *roomBallparkCountLabel;
+@property (weak) IBOutlet NSSlider *roomBallparkCountSlider;
 
 - (IBAction)resetButtonPushed:(id)sender;
 - (IBAction)roomsButtonPressed:(id)sender;
 - (IBAction)mazeButtonPressed:(id)sender;
 - (IBAction)doorsButtonPressed:(id)sender;
 - (IBAction)pruneButtonPressed:(id)sender;
-- (IBAction)detailModeToggled:(id)sender;
 
 - (IBAction)mazeAlgorithmChanged:(id)sender;
 - (IBAction)mazePickStyleChanged:(id)sender;
 - (IBAction)mazeTesellationChanged:(id)sender;
+
+- (IBAction)detailModeToggled:(id)sender;
+- (IBAction)roomDensitySliderChanged:(id)sender;
+- (IBAction)roomMaxAspectRatioSliderChanged:(id)sender;
+- (IBAction)roomBallparkCountSliderChanged:(id)sender;
 @end
 
 @implementation ViewController
@@ -35,6 +49,7 @@
     [super viewDidLoad];
     
     [self reinitializeDungeon];
+    
 }
 
 - (void)reinitializeDungeon
@@ -51,11 +66,10 @@
                           reframePerTile:NO];
 }
 
-#pragma mark - Dungeon Delegate
-
-- (void)mazeFinishedInTime:(NSTimeInterval)time
-{
-    [self.infoLabel setStringValue:[NSString stringWithFormat:@"maze time: %f",time]];
+- (void)updateSliderValueLabels {
+    [self.roomDensityLabel setStringValue:[NSString stringWithFormat:@"%.0f%%", self.roomDensitySlider.floatValue]];
+    [self.roomMaxAspectRatioLabel setStringValue:[NSString stringWithFormat:@"%.2f", self.roomMaxAspectRatioSlider.floatValue]];
+    [self.roomBallparkCountLabel setStringValue:[NSString stringWithFormat:@"%i", self.roomBallparkCountSlider.intValue]];
 }
 
 #pragma mark - IBActions
@@ -85,6 +99,21 @@
 
 - (IBAction)detailModeToggled:(id)sender {
     [self.dungeonView setDetailedDraw:(((NSButton *)sender).state == NSOnState)];
+}
+
+- (IBAction)roomDensitySliderChanged:(id)sender {
+    [self updateSliderValueLabels];
+    [self.dungeonView setRoomDensity:((NSSlider *)sender).floatValue / 100.0];
+}
+
+- (IBAction)roomMaxAspectRatioSliderChanged:(id)sender {
+    [self updateSliderValueLabels];
+    [self.dungeonView setRoomMaxAspectRatio:((NSSlider *)sender).floatValue];
+}
+
+- (IBAction)roomBallparkCountSliderChanged:(id)sender {
+    [self updateSliderValueLabels];
+    [self.dungeonView setRoomBallparkCount:((NSSlider *)sender).intValue];
 }
 
 - (IBAction)mazeAlgorithmChanged:(id)sender {
