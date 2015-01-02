@@ -1,4 +1,4 @@
-blank newlines in this list deignate borders between days/mindsets/brainstorms
+blank newlines in this list designate borders between days/mindsets/brainstorms
 
 - delegate methods for the other generators (rooms, doors, pruning)
 - reset button also performs "abort" (drawing needs to not tie up main thread for this)
